@@ -1,0 +1,15 @@
+webpackHotUpdate("main",{
+
+/***/ "./src/dashboard/Pinout.tsx":
+/*!**********************************!*\
+  !*** ./src/dashboard/Pinout.tsx ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/kayvon/Dev/gpio-sandbox/src/dashboard/Pinout.tsx: Unexpected token (167:47)\n\n\u001b[0m \u001b[90m 165 |\u001b[39m }\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 166 |\u001b[39m\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36mdefault\u001b[39m \u001b[36mfunction\u001b[39m \u001b[33mPinout\u001b[39m({ setActivePin\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m \u001b[36mvoid\u001b[39m }) {\u001b[0m\n\u001b[0m \u001b[90m     |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 168 |\u001b[39m   \u001b[36mreturn\u001b[39m (\u001b[0m\n\u001b[0m \u001b[90m 169 |\u001b[39m     \u001b[33m<\u001b[39m\u001b[33mReact\u001b[39m\u001b[33m.\u001b[39m\u001b[33mFragment\u001b[39m\u001b[33m>\u001b[39m\u001b[33m<\u001b[39m\u001b[33mTableContainer\u001b[39m component\u001b[33m=\u001b[39m{\u001b[33mPaper\u001b[39m}\u001b[33m>\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 170 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33mTable\u001b[39m size\u001b[33m=\u001b[39m\u001b[32m\"small\"\u001b[39m aria\u001b[33m-\u001b[39mlabel\u001b[33m=\u001b[39m\u001b[32m\"GPIO Pinout\"\u001b[39m\u001b[33m>\u001b[39m\u001b[0m\n    at Object._raise (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:541:17)\n    at Object.raiseWithData (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:534:17)\n    at Object.raise (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:495:17)\n    at Object.unexpected (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:3587:16)\n    at Object.parseIdentifierName (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:12866:18)\n    at Object.parseIdentifier (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:12846:23)\n    at Object.parseBindingAtom (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:10974:17)\n    at Object.parseBindingAtom (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:10050:22)\n    at Object.parseMaybeDefault (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:11036:50)\n    at Object.parseMaybeDefault (/Users/kayvon/Dev/gpio-sandbox/node_modules/@babel/parser/lib/index.js:10087:24)");
+
+/***/ })
+
+})
+//# sourceMappingURL=main.53a22cfc18e1a90e0946.hot-update.js.map
