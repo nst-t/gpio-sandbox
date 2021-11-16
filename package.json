@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@testing-library/user-event": "latest",
-    "nstrumenta": "^1.0.34",
+    "nstrumenta": "^1.0.37",
     "react": "latest",
     "react-dom": "latest",
     "react-scripts": "latest",

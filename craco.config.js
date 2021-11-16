@@ -2,7 +2,7 @@ const CracoAlias = require('craco-alias');
 
 module.exports = {
   devServer: (devServerConfig) => {
-    devServerConfig.writeToDisk = true;
+    devServerConfig.writeToDisk = false;
     return devServerConfig;
   },
   plugins: [

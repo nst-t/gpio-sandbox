@@ -18,6 +18,7 @@ import Orders from './Orders';
 import Pinout from './Pinout';
 import { PinIOStateType, PinState } from '../types';
 import { GPIOContext } from '../App';
+import { Input } from '@mui/material';
 
 function Copyright(props: any) {
   return (
@@ -72,7 +73,7 @@ export interface OpenViews {
   data: true
 }
 
-function DashboardContent() {
+export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl: (url: string) => void }) {
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: false, data: true });
   const [activePin, setActivePin] = useState<string>('');
   const data = useContext(GPIOContext);
@@ -98,6 +99,7 @@ function DashboardContent() {
             >
               Raspberry PI GPIO
             </Typography>
+            <Input onInput={(e) => console.log(e)} value={wsUrl}/>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent">
@@ -145,7 +147,7 @@ function DashboardContent() {
                     width: 1,
                   }}
                 >
-                  <Pinout setActivePin={(id: string) => setActivePin(id)} />
+                  <Pinout setActivePin={(id: string) => setActivePin(id)}/>
                 </Paper>
               </Grid>)}
 
@@ -177,6 +179,6 @@ function DashboardContent() {
   );
 }
 
-export default function Dashboard() {
-  return <DashboardContent/>;
-}
+// export default function Dashboard() {
+//   return <DashboardContent/>;
+// }

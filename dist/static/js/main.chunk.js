@@ -15,7 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _dashboard_Dashboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dashboard/Dashboard */ "./src/dashboard/Dashboard.tsx");
 /* harmony import */ var _mui_material_Box__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material/Box */ "./node_modules/@mui/material/Box/index.js");
-/* harmony import */ var nstrumenta__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nstrumenta */ "./node_modules/nstrumenta/dist/index.js");
+/* harmony import */ var nstrumenta__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nstrumenta */ "./node_modules/nstrumenta/dist/lib/index.js");
 /* harmony import */ var nstrumenta__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nstrumenta__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./types */ "./src/types.ts");
 /* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-dev-runtime */ "./node_modules/react/jsx-dev-runtime.js");
@@ -34,11 +34,6 @@ var _jsxFileName = "/Users/kayvon/Dev/gpio-sandbox/src/App.tsx",
 
 
 const CHANNEL = 'gpio';
-const nst = new nstrumenta__WEBPACK_IMPORTED_MODULE_3__["NstrumentaClient"]({
-  apiKey: '',
-  hostUrl: 'ws://localhost:8088',
-  projectId: 'mapbox-geo'
-});
 const initialGPIOState = {};
 
 for (let i = 1; i <= 40; i += 1) {
@@ -64,25 +59,33 @@ function App() {
   _s();
 
   const [data, setData] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(initialTimeSeriesData);
+  const [wsUrl, setWsUrl] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])('ws://localhost:8088'); // Set up nstrumenta listeners
+
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(() => {
+    const nst = new nstrumenta__WEBPACK_IMPORTED_MODULE_3__["NstrumentaClient"]({
+      apiKey: 'file?',
+      wsUrl: 'ws://localhost:8088',
+      projectId: 'mapbox-geo'
+    });
     nst.addListener('open', () => {
       console.log('a connection is made!');
       nst.subscribe(CHANNEL, message => {
-        // console.log(message);
         const pinData = JSON.parse(message);
-        pinData.date = new Date(pinData.date); // console.log(pinData.id, pinData.date, pinData.value, data[pinData.id]);
-
+        pinData.date = new Date(pinData.date);
         setData(prev => ({ ...prev,
           [pinData.id]: [...prev[pinData.id], pinData]
         }));
       });
     });
     nst.init(); // return () => nst.unsubscribe(CHANNEL);
-  }, []);
+  }, [wsUrl]);
   return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__["jsxDEV"])(GPIOContext.Provider, {
     value: data,
     children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__["jsxDEV"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_2__["default"], {
-      children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__["jsxDEV"])(_dashboard_Dashboard__WEBPACK_IMPORTED_MODULE_1__["default"], {}, void 0, false, {
+      children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_5__["jsxDEV"])(_dashboard_Dashboard__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        wsUrl: wsUrl,
+        setWsUrl: setWsUrl
+      }, void 0, false, {
         fileName: _jsxFileName,
         lineNumber: 63,
         columnNumber: 9
@@ -99,7 +102,7 @@ function App() {
   }, this);
 }
 
-_s(App, "qHN8OZ0QnTfpMxeuvjJiwlh+d6c=");
+_s(App, "vJyGlOC29VP66g5GGNM2ZCqFtYU=");
 
 _c = App;
 
@@ -415,8 +418,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Orders__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Orders */ "./src/dashboard/Orders.tsx");
 /* harmony import */ var _Pinout__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Pinout */ "./src/dashboard/Pinout.tsx");
 /* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../App */ "./src/App.tsx");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! react/jsx-dev-runtime */ "./node_modules/react/jsx-dev-runtime.js");
-/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/index.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! react/jsx-dev-runtime */ "./node_modules/react/jsx-dev-runtime.js");
+/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__);
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 __webpack_require__.$Refresh$.setup(module.i);
 
@@ -444,24 +448,25 @@ var _jsxFileName = "/Users/kayvon/Dev/gpio-sandbox/src/dashboard/Dashboard.tsx",
 
 
 
+
 function Copyright(props) {
-  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_8__["default"], {
+  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_8__["default"], {
     variant: "body2",
     color: "text.secondary",
     align: "center",
     ...props,
-    children: ['Copyright © ', /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Link__WEBPACK_IMPORTED_MODULE_13__["default"], {
+    children: ['Copyright © ', /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Link__WEBPACK_IMPORTED_MODULE_13__["default"], {
       color: "inherit",
       href: "https://nstrumenta.com/",
       children: "nstrumenta"
     }, void 0, false, {
       fileName: _jsxFileName,
-      lineNumber: 26,
+      lineNumber: 27,
       columnNumber: 7
     }, this), ' ', new Date().getFullYear(), '.']
   }, void 0, true, {
     fileName: _jsxFileName,
-    lineNumber: 24,
+    lineNumber: 25,
     columnNumber: 5
   }, this);
 }
@@ -502,10 +507,13 @@ const darkTheme = Object(_mui_material_styles__WEBPACK_IMPORTED_MODULE_1__["crea
   }
 });
 const time = new Date(2021, 11, 20, 8, 0, 0);
-
-function DashboardContent() {
+function Dashboard(_ref3) {
   _s();
 
+  let {
+    wsUrl,
+    setWsUrl
+  } = _ref3;
   const [openViews, setOpenViews] = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])({
     pins: false,
     data: true
@@ -520,20 +528,20 @@ function DashboardContent() {
     });
   };
 
-  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_styles__WEBPACK_IMPORTED_MODULE_1__["ThemeProvider"], {
+  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_styles__WEBPACK_IMPORTED_MODULE_1__["ThemeProvider"], {
     theme: mdTheme,
-    children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_4__["default"], {
       sx: {
         display: 'flex'
       },
-      children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_CssBaseline__WEBPACK_IMPORTED_MODULE_2__["default"], {}, void 0, false, {
+      children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_CssBaseline__WEBPACK_IMPORTED_MODULE_2__["default"], {}, void 0, false, {
         fileName: _jsxFileName,
-        lineNumber: 88,
+        lineNumber: 89,
         columnNumber: 9
-      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(AppBar, {
+      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(AppBar, {
         position: "absolute",
-        children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_6__["default"], {
-          children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_8__["default"], {
+        children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_6__["default"], {
+          children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Typography__WEBPACK_IMPORTED_MODULE_8__["default"], {
             component: "h1",
             variant: "h6",
             color: "inherit",
@@ -544,21 +552,28 @@ function DashboardContent() {
             children: "Raspberry PI GPIO"
           }, void 0, false, {
             fileName: _jsxFileName,
-            lineNumber: 92,
+            lineNumber: 93,
             columnNumber: 13
-          }, this)
-        }, void 0, false, {
+          }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material__WEBPACK_IMPORTED_MODULE_19__["Input"], {
+            onInput: e => console.log(e),
+            value: wsUrl
+          }, void 0, false, {
+            fileName: _jsxFileName,
+            lineNumber: 102,
+            columnNumber: 13
+          }, this)]
+        }, void 0, true, {
           fileName: _jsxFileName,
-          lineNumber: 91,
+          lineNumber: 92,
           columnNumber: 11
         }, this)
       }, void 0, false, {
         fileName: _jsxFileName,
-        lineNumber: 89,
+        lineNumber: 90,
         columnNumber: 9
-      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(Drawer, {
+      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(Drawer, {
         variant: "permanent",
-        children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_6__["default"], {
           sx: {
             display: 'flex',
             alignItems: 'center',
@@ -567,31 +582,31 @@ function DashboardContent() {
           }
         }, void 0, false, {
           fileName: _jsxFileName,
-          lineNumber: 104,
+          lineNumber: 106,
           columnNumber: 11
-        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Divider__WEBPACK_IMPORTED_MODULE_9__["default"], {}, void 0, false, {
+        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Divider__WEBPACK_IMPORTED_MODULE_9__["default"], {}, void 0, false, {
           fileName: _jsxFileName,
-          lineNumber: 113,
+          lineNumber: 115,
           columnNumber: 11
-        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_List__WEBPACK_IMPORTED_MODULE_7__["default"], {
-          children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_listItems__WEBPACK_IMPORTED_MODULE_14__["MainListItems"], {
+        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_List__WEBPACK_IMPORTED_MODULE_7__["default"], {
+          children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_listItems__WEBPACK_IMPORTED_MODULE_14__["MainListItems"], {
             updateViews: updateViews,
             openViews: openViews
           }, void 0, false, {
             fileName: _jsxFileName,
-            lineNumber: 114,
+            lineNumber: 116,
             columnNumber: 17
           }, this)
         }, void 0, false, {
           fileName: _jsxFileName,
-          lineNumber: 114,
+          lineNumber: 116,
           columnNumber: 11
         }, this)]
       }, void 0, true, {
         fileName: _jsxFileName,
-        lineNumber: 103,
+        lineNumber: 105,
         columnNumber: 9
-      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Box__WEBPACK_IMPORTED_MODULE_4__["default"], {
         component: "main",
         sx: {
           backgroundColor: theme => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
@@ -599,20 +614,20 @@ function DashboardContent() {
           height: '100vh',
           overflow: 'auto'
         },
-        children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_6__["default"], {}, void 0, false, {
+        children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Toolbar__WEBPACK_IMPORTED_MODULE_6__["default"], {}, void 0, false, {
           fileName: _jsxFileName,
-          lineNumber: 129,
+          lineNumber: 131,
           columnNumber: 11
-        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Container__WEBPACK_IMPORTED_MODULE_10__["default"], {
+        }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Container__WEBPACK_IMPORTED_MODULE_10__["default"], {
           maxWidth: "lg",
           sx: {
             mt: 4,
             mb: 4
           },
-          children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
+          children: [/*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
             container: true,
             spacing: 3,
-            children: [openViews.pins && /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
+            children: [openViews.pins && /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
               item: true,
               xs: 12,
               md: 4,
@@ -623,7 +638,7 @@ function DashboardContent() {
                 justifyContent: 'space-around',
                 width: '120px'
               },
-              children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Paper__WEBPACK_IMPORTED_MODULE_12__["default"], {
+              children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Paper__WEBPACK_IMPORTED_MODULE_12__["default"], {
                 sx: {
                   p: 2,
                   display: 'flex',
@@ -631,128 +646,121 @@ function DashboardContent() {
                   height: 480,
                   width: 1
                 },
-                children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_Pinout__WEBPACK_IMPORTED_MODULE_17__["default"], {
+                children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_Pinout__WEBPACK_IMPORTED_MODULE_17__["default"], {
                   setActivePin: id => setActivePin(id)
                 }, void 0, false, {
                   fileName: _jsxFileName,
-                  lineNumber: 148,
+                  lineNumber: 150,
                   columnNumber: 19
                 }, this)
               }, void 0, false, {
                 fileName: _jsxFileName,
-                lineNumber: 139,
+                lineNumber: 141,
                 columnNumber: 17
               }, this)
             }, void 0, false, {
               fileName: _jsxFileName,
-              lineNumber: 133,
+              lineNumber: 135,
               columnNumber: 35
-            }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
+            }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
               item: true,
               xs: 12,
               md: openViews.pins ? 8 : 12,
               lg: openViews.pins ? 9 : 12,
-              children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Paper__WEBPACK_IMPORTED_MODULE_12__["default"], {
+              children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Paper__WEBPACK_IMPORTED_MODULE_12__["default"], {
                 sx: {
                   p: 2,
                   display: 'flex',
                   flexDirection: 'column',
                   height: 480
                 },
-                children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_Chart__WEBPACK_IMPORTED_MODULE_15__["default"], {
+                children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_Chart__WEBPACK_IMPORTED_MODULE_15__["default"], {
                   data: activePin ? data[activePin] : []
                 }, void 0, false, {
                   fileName: _jsxFileName,
-                  lineNumber: 162,
+                  lineNumber: 164,
                   columnNumber: 19
                 }, this)
               }, void 0, false, {
                 fileName: _jsxFileName,
-                lineNumber: 154,
+                lineNumber: 156,
                 columnNumber: 17
               }, this)
             }, void 0, false, {
               fileName: _jsxFileName,
-              lineNumber: 153,
+              lineNumber: 155,
               columnNumber: 15
-            }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
+            }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Grid__WEBPACK_IMPORTED_MODULE_11__["default"], {
               item: true,
               xs: 12,
-              children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_mui_material_Paper__WEBPACK_IMPORTED_MODULE_12__["default"], {
+              children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_mui_material_Paper__WEBPACK_IMPORTED_MODULE_12__["default"], {
                 sx: {
                   p: 2,
                   display: 'flex',
                   flexDirection: 'column'
                 },
-                children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(_Orders__WEBPACK_IMPORTED_MODULE_16__["default"], {
+                children: /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(_Orders__WEBPACK_IMPORTED_MODULE_16__["default"], {
                   data: activePin ? data[activePin] : []
                 }, void 0, false, {
                   fileName: _jsxFileName,
-                  lineNumber: 168,
+                  lineNumber: 170,
                   columnNumber: 19
                 }, this)
               }, void 0, false, {
                 fileName: _jsxFileName,
-                lineNumber: 167,
+                lineNumber: 169,
                 columnNumber: 17
               }, this)
             }, void 0, false, {
               fileName: _jsxFileName,
-              lineNumber: 166,
+              lineNumber: 168,
               columnNumber: 15
             }, this)]
           }, void 0, true, {
             fileName: _jsxFileName,
-            lineNumber: 131,
+            lineNumber: 133,
             columnNumber: 13
-          }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(Copyright, {
+          }, this), /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_20__["jsxDEV"])(Copyright, {
             sx: {
               pt: 4
             }
           }, void 0, false, {
             fileName: _jsxFileName,
-            lineNumber: 172,
+            lineNumber: 174,
             columnNumber: 13
           }, this)]
         }, void 0, true, {
           fileName: _jsxFileName,
-          lineNumber: 130,
+          lineNumber: 132,
           columnNumber: 11
         }, this)]
       }, void 0, true, {
         fileName: _jsxFileName,
-        lineNumber: 117,
+        lineNumber: 119,
         columnNumber: 9
       }, this)]
     }, void 0, true, {
       fileName: _jsxFileName,
-      lineNumber: 87,
+      lineNumber: 88,
       columnNumber: 7
     }, this)
   }, void 0, false, {
     fileName: _jsxFileName,
-    lineNumber: 86,
+    lineNumber: 87,
     columnNumber: 5
   }, this);
-}
+} // export default function Dashboard() {
+//   return <DashboardContent/>;
+// }
 
-_s(DashboardContent, "7880zU9ZcSlQW6VQMEHGQsNMJWo=");
+_s(Dashboard, "7880zU9ZcSlQW6VQMEHGQsNMJWo=");
 
-_c2 = DashboardContent;
-function Dashboard() {
-  return /*#__PURE__*/Object(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_19__["jsxDEV"])(DashboardContent, {}, void 0, false, {
-    fileName: _jsxFileName,
-    lineNumber: 181,
-    columnNumber: 10
-  }, this);
-}
-_c3 = Dashboard;
+_c2 = Dashboard;
 
-var _c, _c2, _c3;
+var _c, _c2;
 
 __webpack_require__.$Refresh$.register(_c, "Copyright");
-__webpack_require__.$Refresh$.register(_c2, "DashboardContent");
-__webpack_require__.$Refresh$.register(_c3, "Dashboard");
+__webpack_require__.$Refresh$.register(_c2, "Dashboard");
 
 const currentExports = __react_refresh_utils__.getModuleExports(module.i);
 __react_refresh_utils__.registerExportsForReactRefresh(currentExports, module.i);
