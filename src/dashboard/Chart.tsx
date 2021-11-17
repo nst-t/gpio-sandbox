@@ -32,7 +32,18 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
             dataKey="time"
             stroke={theme.palette.text.secondary}
             style={theme.typography.body2}
-          />
+          >
+            <Label
+              position="bottom"
+              style={{
+                textAnchor: 'middle',
+                fill: theme.palette.text.primary,
+                ...theme.typography.body1,
+              }}
+            >
+              Time
+            </Label>
+          </XAxis>
           <YAxis
             stroke={theme.palette.text.secondary}
             style={theme.typography.body2}
@@ -51,10 +62,12 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
           </YAxis>
           <Line
             isAnimationActive={false}
-            type="monotone"
+            type="stepAfter"
             dataKey="value"
             stroke={theme.palette.primary.main}
             dot={false}
+            connectNulls={false}
+            strokeLinejoin={'miter'}
           />
         </LineChart>
       </ResponsiveContainer>

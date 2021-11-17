@@ -1,29 +1,34 @@
 {
-  "name": "create-react-app-with-styled-components-typescript",
-  "version": "5.0.0",
+  "name": "gpio-sandbox",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.1.0",
     "@mui/lab": "latest",
     "@mui/material": "latest",
-    "@mui/styled-engine-sc": "latest",
-    "@testing-library/jest-dom": "latest",
-    "@testing-library/react": "latest",
-    "@testing-library/user-event": "latest",
+    "@testing-library/jest-dom": "^5.15.0",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
     "nstrumenta": "^1.0.37",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-scripts": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
     "recharts": "^2.1.6",
-    "styled-components": "latest",
-    "victory": "^36.2.0"
+    "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "tsc": "./node_modules/.bin/tsc",
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -38,12 +43,10 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "@types/styled-components": "latest",
-    "craco-alias": "^3.0.1",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^12.20.37",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
     "typescript": "latest"
   }
 }
