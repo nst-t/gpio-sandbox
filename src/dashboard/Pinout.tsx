@@ -174,13 +174,13 @@ export default function Pinout({ setActivePin }: { setActivePin: (id: string) =>
               key={`${row[0].id}:${row[1].id}`}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell onClick={() => setActivePin(row[0].id)} component="td" sx={{ backgroundColor: 'default' }}>
+              <TableCell onClick={() => setActivePin(row[0].id)} component="td" sx={{ backgroundColor: 'default', cursor: 'pointer' }}>
                 <Typography fontSize={10}>{row[0].name}</Typography>
               </TableCell>
               <TableCell sx={{ borderRight: 1, backgroundColor: 'background' }} align="right"><PinIcon
                 type={row[0].type}/></TableCell>
               <TableCell align="left"><PinIcon type={row[0].type}/></TableCell>
-              <TableCell onClick={() => setActivePin(row[1].id)} component="td">
+              <TableCell onClick={() => setActivePin(row[1].id)} component="td" sx={{ cursor: 'pointer' }}>
                 <Typography fontSize={10}>{row[1].name}</Typography>
               </TableCell>
             </TableRow>

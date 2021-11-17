@@ -31,7 +31,8 @@ export const GPIOContext = createContext<GPIOTimeSeriesData>({});
 
 export default function App() {
   const [data, setData] = useState<GPIOTimeSeriesData>(initialTimeSeriesData);
-  const [wsUrl, setWsUrl] = useState('ws://localhost:8088');
+  const [wsUrl, setWsUrl] = useState(`ws://${window.location.hostname}:8088`);
+  const [connected, setConnected] = useState(false);
 
   // Set up nstrumenta listeners
   useEffect(() => {
@@ -45,6 +46,7 @@ export default function App() {
 
       nst.addListener('open', () => {
         console.log('a connection is made!');
+        setConnected(true);
         nst.subscribe(CHANNEL, (message: string) => {
           const pinData: PinData = JSON.parse(message);
           pinData.date = new Date(pinData.date);
@@ -54,8 +56,15 @@ export default function App() {
         })
       });
 
+      nst.addListener('close', () => {
+        console.log('lost ws connection');
+        setConnected(false);
+      })
+
       nst.init();
     } catch (e) {
+      console.log(e);
+      console.log(wsUrl);
       alert('problem with the websocket url!');
     }
     // return () => nst.unsubscribe(CHANNEL);
@@ -65,7 +74,7 @@ export default function App() {
   return (
     <GPIOContext.Provider value={data}>
       <Box>
-        <Dashboard wsUrl={wsUrl} setWsUrl={setWsUrl} />
+        <Dashboard wsUrl={wsUrl} setWsUrl={setWsUrl} connected={connected}/>
       </Box>
     </GPIOContext.Provider>
 

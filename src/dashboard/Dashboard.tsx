@@ -12,12 +12,14 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
+import { TextField } from '@mui/material';
+import { CastConnectedRounded } from '@mui/icons-material';
 import { MainListItems } from './listItems';
 import Chart from './Chart';
 import Orders from './Orders';
 import Pinout from './Pinout';
 import { GPIOContext } from '../App';
-import { TextField } from '@mui/material';
+
 
 function Copyright(props: any) {
   return (
@@ -68,14 +70,18 @@ const darkTheme = createTheme({
 const time = new Date(2021, 11, 20, 8, 0, 0);
 
 export interface OpenViews {
-  pins: false,
-  data: true
+  pins: boolean,
+  data: boolean,
 }
 
-export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl: (url: string) => void }) {
+export default function Dashboard({
+  wsUrl,
+  setWsUrl,
+  connected,
+}: { wsUrl: string, setWsUrl: (url: string) => void, connected: boolean }) {
   const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
-  const [openViews, setOpenViews] = useState<OpenViews>({ pins: false, data: true });
-  const [activePin, setActivePin] = useState<string>('');
+  const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
+  const [activePin, setActivePin] = useState<string>('1');
 
   const data = useContext(GPIOContext);
 
@@ -100,11 +106,6 @@ export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl
             >
               Raspberry PI GPIO
             </Typography>
-
-            <TextField variant="standard"
-                       label="websocket host"
-                       onChange={(e) => setUpdatedWsUrl(e.target.value)}
-                       onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}/>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent">
@@ -112,11 +113,13 @@ export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justifyContent: 'center',
               px: [1],
             }}
           >
+            <CastConnectedRounded color={connected ? 'secondary' : 'disabled'} sx={{ backgroundColor: 'action' }}/>
           </Toolbar>
+
           <Divider/>
           <List><MainListItems updateViews={updateViews} openViews={openViews}/></List>
         </Drawer>
@@ -136,6 +139,14 @@ export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl
           <Toolbar/>
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
+              <Grid item xs={12} lg={12}>
+                <Paper sx={{ padding: 2 }}>
+                  <TextField variant="standard"
+                             label="websocket host"
+                             onChange={(e) => setUpdatedWsUrl(e.target.value)}
+                             onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}/>
+                </Paper>
+              </Grid>
               {/* Pinout */}
               {openViews.pins && (<Grid item xs={12} md={4} lg={3} sx={{
                 display: 'flex',

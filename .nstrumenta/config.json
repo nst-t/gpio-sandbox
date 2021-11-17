@@ -1,0 +1,10 @@
+{
+  "modules": [
+    {
+      "type": "sandbox",
+      "name": "gpio-sandbox",
+      "folder": "gpio-sandbox",
+      "entry": "dist/index.html"
+    },
+  ]
+}
