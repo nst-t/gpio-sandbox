@@ -1,8 +1,15 @@
-import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
-import Title from './Title';
-import { PinTimeSeriesData } from '../types';
+import * as React from "react";
+import { useTheme } from "@mui/material/styles";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Label,
+  ResponsiveContainer,
+} from "recharts";
+import Title from "./Title";
+import { PinTimeSeriesData } from "../types";
 
 export default function Chart({ data }: { data: PinTimeSeriesData }) {
   const theme = useTheme();
@@ -10,11 +17,13 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
   const displayFormattedData = data.map((data) => {
     return {
       ...data,
-      time: `${data.date.getHours()}:${data.date.getMinutes()}`
-    }
-  })
+      time: `${new Date(data.date).getHours()}:${new Date(
+        data.date
+      ).getMinutes()}`,
+    };
+  });
 
-  console.log(data)
+  console.log(data);
   return (
     <React.Fragment>
       <Title>Data {data[0] && data[0].id}</Title>
@@ -36,7 +45,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
             <Label
               position="bottom"
               style={{
-                textAnchor: 'middle',
+                textAnchor: "middle",
                 fill: theme.palette.text.primary,
                 ...theme.typography.body1,
               }}
@@ -52,7 +61,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
               angle={270}
               position="left"
               style={{
-                textAnchor: 'middle',
+                textAnchor: "middle",
                 fill: theme.palette.text.primary,
                 ...theme.typography.body1,
               }}
@@ -67,7 +76,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
             stroke={theme.palette.primary.main}
             dot={false}
             connectNulls={false}
-            strokeLinejoin={'miter'}
+            strokeLinejoin={"miter"}
           />
         </LineChart>
       </ResponsiveContainer>
