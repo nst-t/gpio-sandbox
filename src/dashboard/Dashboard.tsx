@@ -16,9 +16,8 @@ import { MainListItems } from './listItems';
 import Chart from './Chart';
 import Orders from './Orders';
 import Pinout from './Pinout';
-import { PinIOStateType, PinState } from '../types';
 import { GPIOContext } from '../App';
-import { Input } from '@mui/material';
+import { TextField } from '@mui/material';
 
 function Copyright(props: any) {
   return (
@@ -74,8 +73,10 @@ export interface OpenViews {
 }
 
 export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl: (url: string) => void }) {
+  const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: false, data: true });
   const [activePin, setActivePin] = useState<string>('');
+
   const data = useContext(GPIOContext);
 
   const updateViews = (name: string, state: boolean) => {
@@ -99,7 +100,11 @@ export default function Dashboard({ wsUrl, setWsUrl }: { wsUrl: string, setWsUrl
             >
               Raspberry PI GPIO
             </Typography>
-            <Input onInput={(e) => console.log(e)} value={wsUrl}/>
+
+            <TextField variant="standard"
+                       label="websocket host"
+                       onChange={(e) => setUpdatedWsUrl(e.target.value)}
+                       onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}/>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent">

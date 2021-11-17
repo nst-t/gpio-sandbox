@@ -35,24 +35,29 @@ export default function App() {
 
   // Set up nstrumenta listeners
   useEffect(() => {
-    const nst = new NstrumentaClient({
-      apiKey: 'file?',
-      wsUrl: 'ws://localhost:8088',
-      projectId: 'mapbox-geo'
-    });
+    console.log(`wsUrl updated to ${wsUrl}`);
+    try {
+      const nst = new NstrumentaClient({
+        apiKey: 'file?',
+        wsUrl: wsUrl,
+        projectId: 'mapbox-geo'
+      });
 
-    nst.addListener('open', () => {
-      console.log('a connection is made!');
-      nst.subscribe(CHANNEL, (message: string) => {
-        const pinData: PinData = JSON.parse(message);
-        pinData.date = new Date(pinData.date);
-        setData((prev) => ({
-          ...prev, [pinData.id]: [...prev[pinData.id], pinData]
-        }))
-      })
-    });
+      nst.addListener('open', () => {
+        console.log('a connection is made!');
+        nst.subscribe(CHANNEL, (message: string) => {
+          const pinData: PinData = JSON.parse(message);
+          pinData.date = new Date(pinData.date);
+          setData((prev) => ({
+            ...prev, [pinData.id]: [...prev[pinData.id], pinData]
+          }))
+        })
+      });
 
-    nst.init();
+      nst.init();
+    } catch (e) {
+      alert('problem with the websocket url!');
+    }
     // return () => nst.unsubscribe(CHANNEL);
   }, [wsUrl]);
 
