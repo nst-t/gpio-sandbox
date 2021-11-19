@@ -5,13 +5,9 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
-import { PinState, PinTimeSeriesData } from "../types";
+import { PinTimeSeriesData } from "../types";
 
-// function preventDefault(event: React.MouseEvent) {
-//   event.preventDefault();
-// }
-
-export default function Orders({ data }: { data: PinTimeSeriesData }) {
+export default function PinData({ data }: { data: PinTimeSeriesData }) {
   return (
     <React.Fragment>
       <Title>GPIO Pin Data</Title>

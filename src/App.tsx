@@ -1,18 +1,19 @@
-import * as React from "react";
+import * as React from 'react';
 
-import Dashboard from "./dashboard/Dashboard";
-import Box from "@mui/material/Box";
-import { NstrumentaClient } from "nstrumenta";
+import Dashboard from './dashboard/Dashboard';
+import Box from '@mui/material/Box';
+import { NstrumentaClient } from 'nstrumenta';
 import {
-  PinState,
   PinIOStateType,
   GPIOTimeSeriesData,
   GPIOState,
   PinData,
-} from "./types";
-import { createContext, useEffect, useState } from "react";
+  SendMessageHandlerSignature, SendHandler,
+} from './types';
+import { createContext, useEffect, useState } from 'react';
 
-const CHANNEL = "gpio";
+const CHANNEL = 'gpio';
+const COMMAND_CHANNEL = 'gpio-command';
 
 const initialGPIOState: GPIOState = {};
 for (let i = 1; i <= 40; i += 1) {
@@ -23,46 +24,76 @@ for (let i = 1; i <= 40; i += 1) {
   };
 }
 
-const initialTimeSeriesData: GPIOTimeSeriesData = {};
+const initialTimeSeriesData: GPIOTimeSeriesData = [];
 for (let i = 1; i <= 40; i += 1) {
-  initialTimeSeriesData[i.toString()] = [
+  initialTimeSeriesData[i] = [
     {
-      id: i.toString(),
+      id: i,
       date: new Date(Date.now() + 30 * 60 * 1000),
       value: null,
     },
   ];
 }
 
-export const GPIOContext = createContext<GPIOTimeSeriesData>({});
+export const GPIOContext = createContext<GPIOTimeSeriesData>([]);
 
 export default function App() {
   const [data, setData] = useState<GPIOTimeSeriesData>(initialTimeSeriesData);
   const [wsUrl, setWsUrl] = useState(`ws://${window.location.hostname}:8088`);
   const [connected, setConnected] = useState(false);
+  const [sendHandler, setSendHandler] = useState<SendHandler>(() => () => (_: SendMessageHandlerSignature) => null);
 
   // Set up nstrumenta listeners
   useEffect(() => {
     console.log(`wsUrl updated to ${wsUrl}`);
     try {
       const nst = new NstrumentaClient({
-        apiKey: "file?",
+        apiKey: 'file?',
         wsUrl: wsUrl,
-        projectId: "mapbox-geo",
+        projectId: 'mapbox-geo',
       });
 
-      nst.addListener("open", () => {
-        console.log("a connection is made!");
+      nst.addListener('open', () => {
+        console.log('a connection is made!');
         setConnected(true);
+        // Now that the connection is open, we can enable sending a message on user input
+        const handler = (values: SendMessageHandlerSignature) => {
+            if (!values) {
+              return;
+            }
+            console.log('send', {
+              pin: values.pin,
+              value: values.value
+            });
+            nst.send(COMMAND_CHANNEL, {
+              pin: values.pin,
+              value: values.value
+            })
+          }
+        ;
+        // console.log('handler should be', handler, 'but set to 2 instead');
+        setSendHandler(() => handler);
+        console.log('sendHandler should be set, now subscribe to channel');
         nst.subscribe(CHANNEL, (pinData: PinData) => {
-          setData((prev) => {
-            return { ...prev, [pinData.id]: [...prev[pinData.id], pinData] };
+          setData((prevData) => {
+            // Data is an array of arrays. To avoid unexpected state issues in React,
+            // we want to treat arrays as immutable, and clone them to set new state.
+            // First, the top level array is mapped to a new array
+            const newData = prevData.map((singlePinSeries, index) => {
+              // And each pin's individual timeseries array is cloned
+              if (index === pinData.id) {
+                // In the case of the particular pin receiving an update, we concatenate onto the clone
+                return [ ...singlePinSeries, pinData ];
+              }
+              return [ ...singlePinSeries ];
+            });
+            return newData;
           });
         });
       });
 
-      nst.addListener("close", () => {
-        console.log("lost ws connection");
+      nst.addListener('close', () => {
+        console.log('lost ws connection');
         setConnected(false);
       });
 
@@ -70,7 +101,7 @@ export default function App() {
     } catch (e) {
       console.log(e);
       console.log(wsUrl);
-      alert("problem with the websocket url!");
+      alert('problem with the websocket url!');
     }
     // return () => nst.unsubscribe(CHANNEL);
   }, [wsUrl]);
@@ -78,7 +109,7 @@ export default function App() {
   return (
     <GPIOContext.Provider value={data}>
       <Box>
-        <Dashboard wsUrl={wsUrl} setWsUrl={setWsUrl} connected={connected} />
+        <Dashboard sendHandler={sendHandler} wsUrl={wsUrl} setWsUrl={setWsUrl} connected={connected}/>
       </Box>
     </GPIOContext.Provider>
   );

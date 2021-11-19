@@ -1,46 +1,51 @@
-# Getting Started with Create React App
+# Nstrumenta Sandbox Example
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repo contains two pieces:
 
-## Available Scripts
+* web based [sandbox](#sandbox) demo app
+* node based [sensor reader](#node) app for raspberry pi GPIO
 
-In the project directory, you can run:
+### Prerequisite
 
-### `npm start`
+Install [_nstrumenta_](https://nstrumenta.com) cli globally on your raspberry pi:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```shell
+npm i -g nstrumenta
+nstrumenta context set-property projectId --value=PROJECT_ID
+nstrumenta context set-property wsHost --value=localhost:8088
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+ssh into the raspberry pi, and start the webscocket host
 
-### `npm test`
+```shell
+nstrumenta serve
+```
+## <a name="cli"></a> Sandbox
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The example app was created with [create react app](https://create-react-app.dev/) with [typescript](https://typescript.org). 
 
-### `npm run build`
+[more here...]
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```shell
+npm run start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## <a name="cli"></a> Node app
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This example will be run on a raspberry pi. If you have a raspberry pi 3 or 4, you can [use vscode to directly edit](https://code.visualstudio.com/docs/remote/ssh) this app, or if you have a pi zero w, for example:
 
-### `npm run eject`
+```shell
+scp -r gpio-rpi/ USER@RASPBERRYPI.LOCAL:~/gpio-rpi
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Once the files are on the raspberry pi, log in and run the script
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```shell
+# raspberry pi console 2
+cd gpio-rpi
+npm i
+node index.js
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The script will try to connect to `ws://localhost:8088`. On a successful connection, 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).

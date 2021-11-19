@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -12,13 +12,15 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
 import { TextField } from '@mui/material';
 import { CastConnectedRounded } from '@mui/icons-material';
 import { MainListItems } from './listItems';
 import Chart from './Chart';
-import Orders from './Orders';
+import PinData from './PinData';
 import Pinout from './Pinout';
 import { GPIOContext } from '../App';
+import { SendHandler } from '../types';
 
 
 function Copyright(props: any) {
@@ -61,13 +63,13 @@ const Drawer = styled(MuiDrawer, {})(
 );
 
 const mdTheme = createTheme();
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  }
-})
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//   }
+// })
 
-const time = new Date(2021, 11, 20, 8, 0, 0);
+// const time = new Date(2021, 11, 20, 8, 0, 0);
 
 export interface OpenViews {
   pins: boolean,
@@ -78,10 +80,16 @@ export default function Dashboard({
   wsUrl,
   setWsUrl,
   connected,
-}: { wsUrl: string, setWsUrl: (url: string) => void, connected: boolean }) {
+  sendHandler,
+}: { sendHandler: SendHandler, wsUrl: string, setWsUrl: (url: string) => void, connected: boolean }) {
   const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
-  const [activePin, setActivePin] = useState<string>('1');
+  const [activePin, setActivePin] = useState<number>(1);
+  const [sendValue, setSendValue] = useState<1 | 0>(0);
+
+  useEffect(() => {
+    console.log({ sendHandler });
+  }, [sendHandler])
 
   const data = useContext(GPIOContext);
 
@@ -89,6 +97,8 @@ export default function Dashboard({
     console.log('updateViews', name, state)
     setOpenViews({ ...openViews, [name]: state })
   };
+
+  console.log('[Dashboard:render], sendHandler:', sendHandler);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -139,12 +149,26 @@ export default function Dashboard({
           <Toolbar/>
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} lg={12}>
+              <Grid item xs={6} lg={12}>
+                <Paper sx={{ padding: 2 }}>
+                  <TextField disabled={!connected} variant="standard"
+                             label={`Pin ${activePin}`}
+                             onChange={(e) => setSendValue(e.target.value ? 1 : 0)}
+                  />
+                  <Button disabled={!connected} onClick={() => {
+                    sendHandler({ channel: 'gpio', pin: activePin, value: sendValue });
+                  }}
+                          variant="outlined" type="submit" aria-label="send to pin">Send</Button>
+                </Paper>
+              </Grid>
+              <Grid item xs={6} lg={12}>
                 <Paper sx={{ padding: 2 }}>
                   <TextField variant="standard"
                              label="websocket host"
                              onChange={(e) => setUpdatedWsUrl(e.target.value)}
-                             onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}/>
+                             onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}
+                             fullWidth
+                  />
                 </Paper>
               </Grid>
               {/* Pinout */}
@@ -163,7 +187,7 @@ export default function Dashboard({
                     width: 1,
                   }}
                 >
-                  <Pinout setActivePin={(id: string) => setActivePin(id)}/>
+                  <Pinout sendHandler={sendHandler} setActivePin={(id: number) => setActivePin(id)}/>
                 </Paper>
               </Grid>)}
 
@@ -180,10 +204,10 @@ export default function Dashboard({
                   <Chart data={activePin ? data[activePin] : []}/>
                 </Paper>
               </Grid>
-              {/* Recent Orders */}
+              {/* Recent PinData */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders data={activePin ? data[activePin] : []}/>
+                  <PinData data={activePin ? data[activePin] : []}/>
                 </Paper>
               </Grid>
             </Grid>
