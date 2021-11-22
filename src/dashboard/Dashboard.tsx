@@ -209,7 +209,7 @@ export default function Dashboard({
                     height: 480,
                   }}
                 >
-                  <Chart data={data}/>
+                  <Chart data={activePin ? data[activePin] : []}/>
                 </Paper>
               </Grid>
               {/* Recent PinData */}

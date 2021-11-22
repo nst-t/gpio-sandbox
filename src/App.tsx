@@ -76,6 +76,7 @@ export default function App() {
 
         console.log('sendHandler should be set, now subscribe to channel');
         nst.subscribe(CHANNEL, (pinData: PinData) => {
+          console.log(`received message`, pinData);
           setData((prevData) => {
             // Data is an array of arrays. To avoid unexpected state issues in React,
             // we want to treat arrays as immutable, and clone them to set new state.

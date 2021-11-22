@@ -17,6 +17,7 @@ const nst = new NstrumentaClient(context);
 
 const onRead = (id, value) => {
   try {
+    console.log(`apparently we've read pin ${id} > ${value}, now show off in the gpio channel`);
     nst.send('gpio', { action: 'read', date: Date.now(), id: id, value });
   } catch (err) {
     console.log('error sending to gpio')
@@ -33,7 +34,7 @@ const setPinToOutput = async (id) => {
   try {
     console.log(`set pin ${id} to ${gpiop.DIR_OUT}`);
     await gpiop.setup(index, gpiop.DIR_OUT, gpiop.EDGE_BOTH);
-    // pins[index].direction = 'out';
+    pins[index].direction = 'out';
   } catch (err) {
     console.log(`caught no!`, err);
   }
@@ -44,7 +45,7 @@ const setPinToInput = async (id) => {
   try {
     console.log(`set pin ${id} to ${gpiop.DIR_IN}`);
     await gpiop.setup(index, gpiop.DIR_IN);
-    // pins[index].direction = 'in';
+    pins[index].direction = 'in';
     let value;
     try {
       console.log(`... pin ${id} is now input, so read value`)
