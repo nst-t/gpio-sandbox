@@ -33,7 +33,7 @@ const setPinToOutput = async (id) => {
   const index = id - 1;
   try {
     console.log(`set pin ${id} to ${gpiop.DIR_OUT}`);
-    await gpiop.setup(index, gpiop.DIR_OUT, gpiop.EDGE_BOTH);
+    await gpiop.setup(id, gpiop.DIR_OUT, gpiop.EDGE_BOTH);
     pins[index].direction = 'out';
   } catch (err) {
     console.log(`caught no!`, err);
@@ -44,7 +44,7 @@ const setPinToInput = async (id) => {
   const index = id - 1;
   try {
     console.log(`set pin ${id} to ${gpiop.DIR_IN}`);
-    await gpiop.setup(index, gpiop.DIR_IN);
+    await gpiop.setup(id, gpiop.DIR_IN);
     pins[index].direction = 'in';
     let value;
     try {
@@ -92,7 +92,7 @@ nst.addListener("open", () => {
     try {
       const { action, id, direction, value } = message;
       const index = id - 1;
-      const pin = pins[id];
+      const pin = pins[index];
       console.log('[subscription:gpio]', action, id, direction, value, pin)
 
       switch (action) {
@@ -107,12 +107,12 @@ nst.addListener("open", () => {
           }
           break;
         case 'write':
-          console.log(`set ${pin.id} to ${value}`);
-          await gpiop.write(pin, value);
-          onWriteMessage(pin, value);
+          console.log(`set ${pin.name} to ${Boolean(value)}`);
+          await gpiop.write(id, Boolean(value));
+          onWriteMessage(id, Boolean(value));
         case 'read':
-          const readValue = await gpiop.read(pin);
-          onRead(pin, readValue);
+          const readValue = await gpiop.read(id);
+          onRead(id, readValue);
       }
     } catch (e) {
       console.warn('problem with message', e);

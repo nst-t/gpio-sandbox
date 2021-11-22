@@ -22,6 +22,7 @@ export default function PinData({ data }: { data: PinTimeSeriesData }) {
         <TableBody>
           {data.map(({ id, date, value }) => (
             <TableRow key={id}>
+              <TableCell>{id}</TableCell>
               <TableCell>{`${new Date(date).getHours()}:${new Date(
                 date
               ).getMinutes()}`}</TableCell>

@@ -15,9 +15,6 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
   const theme = useTheme();
 
   const displayFormattedData = data.map((data) => {
-    console.log(`pin ${data.id} ... ${new Date(data.date).getHours()}:${new Date(
-        data.date
-      ).getMinutes()}`);
     return {
       ...data,
       time: `${new Date(data.date).getHours()}:${new Date(
