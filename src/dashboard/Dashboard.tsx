@@ -98,6 +98,7 @@ export default function Dashboard({
     setOpenViews({ ...openViews, [name]: state })
   };
 
+  // TODO: sendHandler is being passed through multiple levels of components; use context and hook
   console.log('[Dashboard:render], sendHandler:', sendHandler);
 
   return (
@@ -153,10 +154,13 @@ export default function Dashboard({
                 <Paper sx={{ padding: 2 }}>
                   <TextField disabled={!connected} variant="standard"
                              label={`Pin ${activePin}`}
-                             onChange={(e) => setSendValue(e.target.value ? 1 : 0)}
+                             onChange={(e) => {
+                               console.log(`set send value to ${e.target.value ? 1 : 0}`)
+                               setSendValue(e.target.value ? 1 : 0)
+                             }}
                   />
                   <Button disabled={!connected} onClick={() => {
-                    sendHandler({ channel: 'gpio', pin: activePin, value: sendValue });
+                    sendHandler({ action: 'write', id: activePin, value: sendValue });
                   }}
                           variant="outlined" type="submit" aria-label="send to pin">Send</Button>
                 </Paper>
@@ -187,7 +191,11 @@ export default function Dashboard({
                     width: 1,
                   }}
                 >
-                  <Pinout sendHandler={sendHandler} setActivePin={(id: number) => setActivePin(id)}/>
+                  <Pinout
+                    connected={connected}
+                    sendHandler={sendHandler}
+                    setActivePin={(id: number) => setActivePin(id)}
+                  />
                 </Paper>
               </Grid>)}
 
@@ -201,7 +209,7 @@ export default function Dashboard({
                     height: 480,
                   }}
                 >
-                  <Chart data={activePin ? data[activePin] : []}/>
+                  <Chart data={data}/>
                 </Paper>
               </Grid>
               {/* Recent PinData */}
@@ -218,7 +226,3 @@ export default function Dashboard({
     </ThemeProvider>
   );
 }
-
-// export default function Dashboard() {
-//   return <DashboardContent/>;
-// }

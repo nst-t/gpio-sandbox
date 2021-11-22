@@ -25,8 +25,8 @@ export type GPIOTimeSeriesData = PinTimeSeriesData[];
 
 
 export interface SendMessageHandlerSignature {
-  channel: string,
-  pin: number,
+  action: 'read' | 'write' | 'set',
+  id: number,
   value?: 1 | 0,
   direction?: 'in' | 'out' | null,
 }

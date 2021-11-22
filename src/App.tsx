@@ -8,12 +8,13 @@ import {
   GPIOTimeSeriesData,
   GPIOState,
   PinData,
-  SendMessageHandlerSignature, SendHandler,
+  SendMessageHandlerSignature,
+  SendHandler,
 } from './types';
 import { createContext, useEffect, useState } from 'react';
 
 const CHANNEL = 'gpio';
-const COMMAND_CHANNEL = 'gpio-command';
+const COMMAND_CHANNEL = 'gpio-command'
 
 const initialGPIOState: GPIOState = {};
 for (let i = 1; i <= 40; i += 1) {
@@ -57,22 +58,22 @@ export default function App() {
         console.log('a connection is made!');
         setConnected(true);
         // Now that the connection is open, we can enable sending a message on user input
-        const handler = (values: SendMessageHandlerSignature) => {
-            if (!values) {
+        // console.log('handler should be', handler, 'but set to 2 instead');
+        setSendHandler(() => (message: SendMessageHandlerSignature) => {
+            console.log('send message', message);
+            if (!message) {
+              console.log('nothing to send');
               return;
             }
-            console.log('send', {
-              pin: values.pin,
-              value: values.value
-            });
             nst.send(COMMAND_CHANNEL, {
-              pin: values.pin,
-              value: values.value
-            })
+              action: message.action,
+              id: message.id,
+              value: message.value,
+              direction: message.direction,
+            });
           }
-        ;
-        // console.log('handler should be', handler, 'but set to 2 instead');
-        setSendHandler(() => handler);
+        );
+
         console.log('sendHandler should be set, now subscribe to channel');
         nst.subscribe(CHANNEL, (pinData: PinData) => {
           setData((prevData) => {
@@ -83,9 +84,9 @@ export default function App() {
               // And each pin's individual timeseries array is cloned
               if (index === pinData.id) {
                 // In the case of the particular pin receiving an update, we concatenate onto the clone
-                return [ ...singlePinSeries, pinData ];
+                return [...singlePinSeries, pinData];
               }
-              return [ ...singlePinSeries ];
+              return [...singlePinSeries];
             });
             return newData;
           });

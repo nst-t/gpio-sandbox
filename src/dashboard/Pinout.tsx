@@ -7,7 +7,8 @@ import {
   TableCell,
   TableContainer,
   Typography,
-  IconProps, IconButton,
+  IconProps,
+  IconButton,
 } from '@mui/material';
 import { CircleTwoTone } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
@@ -147,8 +148,9 @@ const PinIcon = ({ onClick, type }: IconProps & { type: PinType }) => {
 
 export default function Pinout({
   sendHandler,
-  setActivePin
-}: { sendHandler: SendHandler, setActivePin: (id: number) => void }) {
+  setActivePin,
+  connected,
+}: { sendHandler: SendHandler, setActivePin: (id: number) => void, connected: boolean }) {
   const [pins, setPins] = useState<GPIOPin[]>(Array.from(gpio.values()));
   const topPins = pins.filter((pin, id) => id % 2 === 0);
   const bottomPins = pins.filter((pin, id) => id % 2 === 1);
@@ -164,7 +166,7 @@ export default function Pinout({
       const direction = prevDirection === 'out' ? 'in' : 'out';
       gpio.set(id, { ...pin, direction });
       setPins(Array.from(gpio.values()));
-      sendHandler({ channel: 'this is hardwired for now in App.tsx', direction, pin: id})
+      sendHandler({ action: 'set', direction, id })
     }
   }, [sendHandler]);
 
@@ -186,11 +188,14 @@ export default function Pinout({
                     <Typography fontSize={10}>{topPins[index].name}</Typography>
                     {topPins[index].direction && <Typography fontSize={8}>{topPins[index].direction}</Typography>}
                   </TableCell>
-                  <TableCell sx={{ borderRight: 1, backgroundColor: 'background' }} align="right"><PinIcon
-                    type={topPins[index].type} onClick={() => handleSetDirection(pinId)}/></TableCell>
+                  <TableCell sx={{ borderRight: 1, backgroundColor: 'background' }} align="right">
+                    {/* // TODO: put a proper toggle here for setting in/out */}
+                    <PinIcon type={topPins[index].type} onClick={() => connected && handleSetDirection(pinId)}/>
+                  </TableCell>
                   <TableCell align="left"><PinIcon type={bottomPins[index].type}
                                                    onClick={() => handleSetDirection(pinId + 1)}/></TableCell>
-                  <TableCell onClick={() => setActivePin(pinId + 1)} component="td" sx={{ cursor: 'pointer' }}>
+                  <TableCell onClick={() => connected && setActivePin(pinId + 1)} component="td"
+                             sx={{ cursor: 'pointer' }}>
                     <Typography fontSize={10}>{bottomPins[index].name}</Typography>
                     {bottomPins[index].direction && <Typography fontSize={8}>{bottomPins[index].direction}</Typography>}
                   </TableCell>
