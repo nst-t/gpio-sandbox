@@ -152,8 +152,19 @@ export default function Pinout({
   connected,
 }: { sendHandler: SendHandler, setActivePin: (id: number) => void, connected: boolean }) {
   const [pins, setPins] = useState<GPIOPin[]>(Array.from(gpio.values()));
+  const [sendValues, setSendValues] = useState<Map<number, boolean>>(new Map());
   const topPins = pins.filter((pin, id) => id % 2 === 0);
   const bottomPins = pins.filter((pin, id) => id % 2 === 1);
+
+  const toggleSendValueOfId = (id: number) => {
+    const sendValue = sendValues.get(id);
+    setSendValues(new Map(
+      [
+        ...Array.from(sendValues.entries()),
+        [id, !sendValue],
+      ],
+    ));
+  };
 
   const handleSetDirection = useMemo(() => {
     return ({ id, newDirection }: { id: number, newDirection: 'in' | 'out' | null }) => {
@@ -204,8 +215,34 @@ export default function Pinout({
                       <ToggleButton sx={{ fontSize: 8 }} value="out">Out</ToggleButton>
                     </ToggleButtonGroup>}
                   </TableCell>
-                  <TableCell align="right"><PinIcon  type={topPins[index].type}/></TableCell>
-                  <TableCell align="left"><PinIcon type={bottomPins[index].type}/></TableCell>
+                  <TableCell>
+                    <ToggleButton value={sendValues.get(pinId)}
+                                  size="small"
+                                  sx={{ fontSize: 8 }}
+                                  onClick={() => {
+                                    console.log(pinId)
+                                    toggleSendValueOfId(pinId)
+                                  }}>{sendValues.get(pinId)}</ToggleButton>
+                  </TableCell>
+                  <TableCell align="right"><PinIcon type={topPins[index].type}
+                                                    onClick={() => topPins[index].direction === 'out' && sendHandler({
+                                                      id: pinId,
+                                                      value: 1,
+                                                      action: 'write',
+                                                    })}/></TableCell>
+                  <TableCell align="left"><PinIcon type={bottomPins[index].type}
+                                                   onClick={() => topPins[index].direction === 'out' && sendHandler({
+                                                     id: pinId + 1,
+                                                     value: 1,
+                                                     action: 'write',
+                                                   })}/></TableCell>
+                  <TableCell>
+                    <ToggleButton value={sendValues.get(pinId + 1)}
+                                  size="small"
+                                  sx={{ fontSize: 8 }}
+                                  onClick={() => toggleSendValueOfId(pinId + 1)}>{sendValues.get(pinId + 1)}</ToggleButton>
+                  </TableCell>
+
                   <TableCell>
                     {bottomPins[index].type === 'io' && <ToggleButtonGroup
                       size="small"

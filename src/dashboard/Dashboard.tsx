@@ -178,7 +178,7 @@ export default function Dashboard({
                 </Paper>
               </Grid>
               {/* Pinout */}
-              {openViews.pins && (<Grid item xs={12} md={5}>
+              {openViews.pins && (<Grid item xs={12} md={6}>
                 <Paper
                   sx={{
                     p: 2,
@@ -196,7 +196,7 @@ export default function Dashboard({
               </Grid>)}
 
               {/* Chart */}
-              <Grid item xs={12} md={openViews.pins ? 7 : 12}>
+              <Grid item xs={12} md={openViews.pins ? 6 : 12}>
                 <Paper
                   sx={{
                     p: 2,
