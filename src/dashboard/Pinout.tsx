@@ -14,14 +14,14 @@ import {
   Typography,
 } from '@mui/material';
 import { CircleTwoTone } from '@mui/icons-material';
-import { PinIOStateType, PinState, PinType, SendHandler } from '../types';
+import { PinIOStateType, PinState, PinTimeSeriesData, PinType, SendHandler } from '../types';
 import Chart from './Chart';
 import { GPIOContext } from '../App';
 
 
 interface ExtendedPinState extends PinState {
   value?: 1 | 0,
-  data?: { date: Date, value: number },
+  data?: PinTimeSeriesData,
 }
 
 export const gpio: Map<number, ExtendedPinState> = new Map([
@@ -244,7 +244,7 @@ export default function Pinout({
   connected,
   setError,
 }: { sendHandler: SendHandler, connected: boolean, setError: React.Dispatch<React.SetStateAction<Record<string, unknown>>> }) {
-  const [pins, setPins] = useState<(ExtendedPinState)[]>(Array.from(gpio.values()));
+  const [pins, setPins] = useState(gpio);
 
   const data = useContext(GPIOContext);
 
@@ -257,7 +257,7 @@ export default function Pinout({
 
       // update the react state
       gpio.set(id, { ...pin, value });
-      setPins(Array.from(gpio.values()));
+      setPins(new Map(gpio));
 
       // send commmand to write the pin value
       sendHandler({ id, value, action: 'write' });
@@ -272,26 +272,28 @@ export default function Pinout({
       }
       const direction = newDirection ? newDirection : pin.direction;
       gpio.set(id, { ...pin, direction });
-      setPins(Array.from(gpio.values()));
+      setPins(new Map(gpio));
       sendHandler({ action: 'set', direction, id })
     }
   }, [sendHandler]);
 
   useEffect(() => {
-    console.log(pins.map((v) => v.name));
+    console.log(pins);
     console.log(data);
+    for (const [id, pin] of Array.from(pins.entries())) {
+      pin.data = data.filter(({ id: dataId }) => id === dataId);
+    }
   }, [data]);
 
   return (
     <React.Fragment><TableContainer component={Paper} sx={{ flexGrow: 1 }}>
       <Table aria-label="GPIO Pinout">
         <TableBody>
-          {pins
-            .map((pin, index) => {
-              const pinId = index + 1;
+          {Array.from(pins.entries())
+            .map(([id, pin]) => {
               return (
                 <TableRow
-                  key={pinId}
+                  key={id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell width={1} component="td" sx={{ backgroundColor: 'default', cursor: 'pointer' }}>
@@ -311,7 +313,7 @@ export default function Pinout({
                           return;
                         }
                         handleSetDirection({
-                          id: pinId,
+                          id,
                           newDirection,
                         });
                       }}
@@ -337,7 +339,7 @@ export default function Pinout({
                         if (value === undefined) return;
 
                         handleSetPinValue({
-                          id: pinId,
+                          id,
                           value: value,
                         });
                       }}
@@ -349,7 +351,7 @@ export default function Pinout({
                   </TableCell>
                   <TableCell width={1} align="right"><PinIcon type={pin.type}/></TableCell>
                   <TableCell width="auto">
-                    <Chart data={[]}/>
+                    <Chart data={pin.data || []}/>
                   </TableCell>
                 </TableRow>
               );

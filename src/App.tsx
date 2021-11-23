@@ -26,7 +26,6 @@ export default function App() {
 
   // Set up nstrumenta listeners
   useEffect(() => {
-    console.log(`wsUrl updated to ${wsUrl}`);
     try {
       const nst = new NstrumentaClient({
         apiKey: 'file?',
@@ -38,7 +37,6 @@ export default function App() {
         console.log('a connection is made!');
         setConnected(true);
         // Now that the connection is open, we can enable sending a message on user input
-        // console.log('handler should be', handler, 'but set to 2 instead');
         setSendHandler(() => (message: CommandMessage) => {
             console.log('send message', message);
             if (!message) {
@@ -54,7 +52,6 @@ export default function App() {
           }
         );
 
-        console.log('sendHandler should be set, now subscribe to channel');
         nst.subscribe(CHANNEL, (pinData: PinData) => {
           console.log(`received message`, pinData);
           setData((prevData) => prevData.concat(pinData));

@@ -29,8 +29,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
 
   return (
     <React.Fragment>
-      <Title>Pin Data</Title>
-      <ResponsiveContainer>
+      {/*<ResponsiveContainer>*/}
         <LineChart
           data={displayFormattedData}
           margin={{
@@ -82,7 +81,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
             strokeLinejoin={'miter'}
           />
         </LineChart>
-      </ResponsiveContainer>
+      {/*</ResponsiveContainer>*/}
     </React.Fragment>
   );
 }

@@ -105,7 +105,6 @@ export default function Dashboard({
   };
 
   // TODO: sendHandler is being passed through multiple levels of components; use context and hook
-  console.log('[Dashboard:render], error:', error);
 
   return (
     <ThemeProvider theme={theme[themePreference]}>
