@@ -8,7 +8,7 @@ import {
   TableContainer,
   Typography,
   IconProps,
-  IconButton, ToggleButtonGroup, ToggleButton,
+  IconButton, ToggleButtonGroup, ToggleButton, TextField, Button,
 } from '@mui/material';
 import { CircleTwoTone } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
@@ -26,7 +26,7 @@ export interface GPIOPin {
   type: PinType,
 }
 
-export const gpio: Map<number, GPIOPin> = new Map([
+export const gpio: Map<number, GPIOPin & { sendValue?: number }> = new Map([
   [1, { name: 'pow3v3', direction: null, type: PinType.GROUND }], [2,
     {
       name: 'pow5v',
@@ -151,20 +151,20 @@ export default function Pinout({
   setActivePin,
   connected,
 }: { sendHandler: SendHandler, setActivePin: (id: number) => void, connected: boolean }) {
-  const [pins, setPins] = useState<GPIOPin[]>(Array.from(gpio.values()));
-  const [sendValues, setSendValues] = useState<Map<number, boolean>>(new Map());
+  const [pins, setPins] = useState<(GPIOPin & { sendValue?: number })[]>(Array.from(gpio.values()));
   const topPins = pins.filter((pin, id) => id % 2 === 0);
   const bottomPins = pins.filter((pin, id) => id % 2 === 1);
 
-  const toggleSendValueOfId = (id: number) => {
-    const sendValue = sendValues.get(id);
-    setSendValues(new Map(
-      [
-        ...Array.from(sendValues.entries()),
-        [id, !sendValue],
-      ],
-    ));
-  };
+  const handleSetPinValue = useMemo(() => {
+    return ({ id, sendValue }: { id: number, sendValue: number }) => {
+      const pin = gpio.get(id);
+      if (!pin || pin.type !== 'io') {
+        return;
+      }
+      gpio.set(id, { ...pin, sendValue });
+      setPins(Array.from(gpio.values()));
+    }
+  }, [sendHandler]);
 
   const handleSetDirection = useMemo(() => {
     return ({ id, newDirection }: { id: number, newDirection: 'in' | 'out' | null }) => {
@@ -216,13 +216,23 @@ export default function Pinout({
                     </ToggleButtonGroup>}
                   </TableCell>
                   <TableCell>
-                    <ToggleButton value={sendValues.get(pinId)}
-                                  size="small"
-                                  sx={{ fontSize: 8 }}
-                                  onClick={() => {
-                                    console.log(pinId)
-                                    toggleSendValueOfId(pinId)
-                                  }}>{sendValues.get(pinId)}</ToggleButton>
+                    <TextField value={pin.sendValue !== undefined ? String(pin.sendValue) : ''}
+                               size="small"
+                               sx={{ fontSize: 8 }}
+                               onKeyDown={(e) => {
+                                 console.log(pinId, e.key);
+                                 if (e.key === '1' || e.key === '0') {
+                                   handleSetPinValue({ id: pinId, sendValue: Number(e.key) });
+                                 }
+                               }}/>
+                    <Button disabled={!connected || topPins[index].sendValue === undefined}
+                            size="small"
+                            onClick={() => sendHandler({
+                              id: pinId,
+                              action: 'write',
+                              value: (topPins[index].sendValue as 1 | 0)
+                            })}>send</Button>
+
                   </TableCell>
                   <TableCell align="right"><PinIcon type={topPins[index].type}
                                                     onClick={() => topPins[index].direction === 'out' && sendHandler({
@@ -237,10 +247,23 @@ export default function Pinout({
                                                      action: 'write',
                                                    })}/></TableCell>
                   <TableCell>
-                    <ToggleButton value={sendValues.get(pinId + 1)}
-                                  size="small"
-                                  sx={{ fontSize: 8 }}
-                                  onClick={() => toggleSendValueOfId(pinId + 1)}>{sendValues.get(pinId + 1)}</ToggleButton>
+                    <TextField
+                      value={bottomPins[index].sendValue !== undefined ? String(bottomPins[index].sendValue) : ''}
+                      size="small"
+                      sx={{ fontSize: 8 }}
+                      onKeyDown={(e) => {
+                        console.log(pinId, e.key);
+                        if (e.key === '1' || e.key === '0') {
+                          handleSetPinValue({ id: pinId + 1, sendValue: Number(e.key) });
+                        }
+                      }}/>
+                    <Button disabled={!connected || bottomPins[index].sendValue === undefined}
+                            size="small"
+                            onClick={() => sendHandler({
+                              id: pinId + 1,
+                              action: 'write',
+                              value: (bottomPins[index].sendValue as 1 | 0)
+                            })}>send</Button>
                   </TableCell>
 
                   <TableCell>
