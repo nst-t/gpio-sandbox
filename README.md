@@ -1,46 +1,63 @@
-# Getting Started with Create React App
+# Nstrumenta Sandbox Example
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repo contains two pieces:
 
-## Available Scripts
+* web based [sandbox](#sandbox) demo app
+* node based [sensor reader](#node) app for raspberry pi GPIO
 
-In the project directory, you can run:
+### Prerequisite
 
-### `npm start`
+We'll have two terminals into the raspberry pi, one for the websocket server, and the other will run the sample node app to set and read gpio pins.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Install [_nstrumenta_](https://nstrumenta.com) cli globally on your raspberry pi:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+For the first, ssh into the raspberry pi, and start the webscocket server
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```shell
+npm i -g nstrumenta
+nstrumenta context set-property projectId --value=PROJECT_ID
+nstrumenta context set-property wsHost --value=localhost:8088
+```
 
-### `npm run build`
+```shell
+nstrumenta serve
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## <a name="cli"></a> Node app
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This example will be run on a raspberry pi. If you have a raspberry pi 3 or 4, you can [use vscode to directly edit](https://code.visualstudio.com/docs/remote/ssh) this app. If you have a pi zero w, you'll have to copy the folder over manually, for example:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```shell
+scp -r gpio-rpi/ USER@RASPBERRYPI.LOCAL:~/gpio-rpi
+```
 
-### `npm run eject`
+> Note: If you go the vscode route linked above, you'll be able to use vscode to debug the running node app directly within vscode. You'll also be able to use `localhost` later in the sandbox to connect to the server. If not, you'll enter your raspberry pi's ip address or name on the local network in the sandbox.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Once the files are on the raspberry pi, log in and run the script
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```shell
+# raspberry pi console 2
+cd gpio-rpi
+npm i
+node index.js
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The script will try to connect to `ws://localhost:8088`. On a successful connection, 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## <a name="cli"></a> Sandbox
 
-## Learn More
+The example sandbox was created with [create react app](https://create-react-app.dev/) with [typescript](https://typescript.org) and [material ui](https://mui.com) for react.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+In the top level of the sandbox repo, run
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```shell
+npm i
+npm run start
+```
+
+And your browser will load [http://localhost:3000](http://localhost:3000)
+
+Enter the ip address of your raspberry pi running the nstrumenta server. Be sure to keep protocol `ws://` and use port `8088` by default (unless you started the server on a different port). The networking icon in the title bar will turn from gray to purple when the websocket connection is made.
+
+You can set state of any io pins to `in` or `out`, and send a value to a pin via the Pinout diagram.

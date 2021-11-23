@@ -10,7 +10,7 @@ export interface PinState {
 }
 
 export interface PinData {
-  id: string,
+  id: number,
   value: number | null,
   date: Date,
 }
@@ -21,6 +21,11 @@ export interface GPIOState {
 
 export type PinTimeSeriesData = PinData[]
 
-export type GPIOTimeSeriesData = {
-  [id: string]: PinTimeSeriesData;
+export interface SendMessageHandlerSignature {
+  action: 'read' | 'write' | 'set',
+  id: number,
+  value?: 1 | 0,
+  direction?: 'in' | 'out' | null,
 }
+
+export type SendHandler = (args: SendMessageHandlerSignature) => void;
