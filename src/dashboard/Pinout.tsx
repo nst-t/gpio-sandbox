@@ -1,134 +1,227 @@
 import * as React from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import {
+  IconButton,
+  IconProps,
   Paper,
   Table,
-  TableRow,
   TableBody,
   TableCell,
   TableContainer,
+  TableRow,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
-  IconProps,
-  IconButton, ToggleButtonGroup, ToggleButton, TextField, Button,
 } from '@mui/material';
 import { CircleTwoTone } from '@mui/icons-material';
-import { useMemo, useState } from 'react';
-import { SendHandler } from '../types';
+import { PinIOStateType, PinState, PinType, SendHandler } from '../types';
+import Chart from './Chart';
+import { GPIOContext } from '../App';
 
-enum PinType {
-  IO = 'io',
-  POWER = 'power',
-  GROUND = 'ground'
+
+interface ExtendedPinState extends PinState {
+  value?: 1 | 0,
+  data?: { date: Date, value: number },
 }
 
-export interface GPIOPin {
-  name: string,
-  direction: 'in' | 'out' | null,
-  type: PinType,
-}
-
-export const gpio: Map<number, GPIOPin & { sendValue?: number }> = new Map([
-  [1, { name: 'pow3v3', direction: null, type: PinType.GROUND }], [2,
-    {
-      name: 'pow5v',
-      direction: null,
-      type: PinType.POWER
-    }],
-  [3, { name: 'gpio 2', direction: 'out', type: PinType.IO }], [4,
-    {
-      name: 'pow5v',
-      direction: null,
-      type: PinType.POWER
-    }],
-  [5, { name: 'gpio 3', direction: 'out', type: PinType.IO }], [6,
-    {
-      name: 'gnd',
-      direction: null,
-      type: PinType.GROUND
-    }],
-  [7, { name: 'gpio 4', direction: 'out', type: PinType.IO }], [8,
-    {
-      name: 'gpio uart',
-      direction: 'out',
-      type: PinType.IO
-    }],
-  [9, { name: 'gnd', direction: null, type: PinType.GROUND }], [10, {
+export const gpio: Map<number, ExtendedPinState> = new Map([
+  [1, {
+    name: 'pow3v3',
+    direction: null,
+    type: PinType.GROUND
+  }],
+  [2, {
+    name: 'pow5v',
+    direction: null,
+    type: PinType.POWER
+  }],
+  [3, {
+    name: 'gpio 2',
+    direction: null,
+    type: PinType.IO
+  }],
+  [4, {
+    name: 'pow5v',
+    direction: null,
+    type: PinType.POWER
+  }],
+  [5, {
+    name: 'gpio 3',
+    direction: null,
+    type: PinType.IO
+  }],
+  [6, {
+    name: 'gnd',
+    direction: null,
+    type: PinType.GROUND
+  }],
+  [7, {
+    name: 'gpio 4',
+    direction: null,
+    type: PinType.IO
+  }],
+  [8, {
     name: 'gpio uart',
-    direction: 'out',
+    direction: null,
     type: PinType.IO
   }],
-  [11, { name: 'gpio 17', direction: 'out', type: PinType.IO }], [12, {
-    name: 'gpio pcm',
-    direction: 'out',
-    type: PinType.IO
-  }],
-  [13, { name: 'gpio 27', direction: 'out', type: PinType.IO }], [14, {
+  [9, {
     name: 'gnd',
     direction: null,
     type: PinType.GROUND
   }],
-  [15, { name: 'gpio 22', direction: 'out', type: PinType.IO }], [16, {
-    name: 'gpio',
-    direction: 'out',
+  [10, {
+    name: 'gpio uart',
+    direction: null,
     type: PinType.IO
   }],
-  [17, { name: 'pow3v3', direction: null, type: PinType.POWER }], [18, {
-    name: 'gpio',
-    direction: 'out',
+  [11, {
+    name: 'gpio 17',
+    direction: null,
     type: PinType.IO
   }],
-  [19, { name: 'gpio 10', direction: 'out', type: PinType.IO }], [20, {
+  [12, {
+    name: 'gpio pcm',
+    direction: null,
+    type: PinType.IO
+  }],
+  [13, {
+    name: 'gpio 27',
+    direction: null,
+    type: PinType.IO
+  }],
+  [14, {
     name: 'gnd',
-    direction: 'out',
+    direction: null,
+    type: PinType.GROUND
+  }],
+  [15, {
+    name: 'gpio 22',
+    direction: null,
     type: PinType.IO
   }],
-  [21, { name: 'gpio 9', direction: 'out', type: PinType.IO }], [22, {
+  [16, {
     name: 'gpio',
-    direction: 'out',
+    direction: null,
     type: PinType.IO
   }],
-  [23, { name: 'gpio 11', direction: 'out', type: PinType.IO }], [24, {
+  [17, {
+    name: 'pow3v3',
+    direction: null,
+    type: PinType.POWER
+  }],
+  [18, {
+    name: 'gpio',
+    direction: null,
+    type: PinType.IO
+  }],
+  [19, {
+    name: 'gpio 10',
+    direction: null,
+    type: PinType.IO
+  }],
+  [20, {
+    name: 'gnd',
+    direction: null,
+    type: PinType.IO
+  }],
+  [21, {
+    name: 'gpio 9',
+    direction: null,
+    type: PinType.IO
+  }],
+  [22, {
+    name: 'gpio',
+    direction: null,
+    type: PinType.IO
+  }],
+  [23, {
+    name: 'gpio 11',
+    direction: null,
+    type: PinType.IO
+  }],
+  [24, {
     name: 'gpio spi',
-    direction: 'out',
+    direction: null,
     type: PinType.IO
   }],
-  [25, { name: 'gnd', direction: null, type: PinType.GROUND }], [26, {
+  [25, {
+    name: 'gnd',
+    direction: null,
+    type: PinType.GROUND
+  }],
+  [26, {
     name: 'gpio spi',
-    direction: 'out',
+    direction: null,
     type: PinType.IO
   }],
-  [27, { name: 'gpio 0', direction: 'out', type: PinType.IO }], [28, {
+  [27, {
+    name: 'gpio 0',
+    direction: null,
+    type: PinType.IO
+  }],
+  [28, {
     name: 'gpio i2c',
-    direction: 'out',
+    direction: null,
     type: PinType.IO
   }],
-  [29, { name: 'gpio 5', direction: 'out', type: PinType.IO }], [30, {
+  [29, {
+    name: 'gpio 5',
+    direction: null,
+    type: PinType.IO
+  }],
+  [30, {
     name: 'gnd',
     direction: null,
     type: PinType.GROUND
   }],
-  [31, { name: 'gpio 6', direction: 'out', type: PinType.IO }], [32, {
-    name: 'gpio',
-    direction: 'out',
+  [31, {
+    name: 'gpio 6',
+    direction: null,
     type: PinType.IO
   }],
-  [33, { name: 'gpio 13', direction: 'out', type: PinType.IO }], [34, {
+  [32, {
+    name: 'gpio',
+    direction: null,
+    type: PinType.IO
+  }],
+  [33, {
+    name: 'gpio 13',
+    direction: null,
+    type: PinType.IO
+  }],
+  [34, {
     name: 'gnd',
     direction: null,
     type: PinType.GROUND
   }],
-  [35, { name: 'gpio 19', direction: 'out', type: PinType.IO }], [36, {
+  [35, {
+    name: 'gpio 19',
+    direction: null,
+    type: PinType.IO
+  }],
+  [36, {
     name: 'gpio',
-    direction: 'out',
+    direction: null,
     type: PinType.IO
   }],
-  [37, { name: 'gpio 26', direction: 'out', type: PinType.IO }], [38, {
-    name: 'gpio pcm',
-    direction: 'out',
+  [37, {
+    name: 'gpio 26',
+    direction: null,
     type: PinType.IO
   }],
-  [39, { name: 'gnd', direction: null, type: PinType.GROUND }], [40, {
+  [38, {
     name: 'gpio pcm',
-    direction: 'out',
+    direction: null,
+    type: PinType.IO
+  }],
+  [39, {
+    name: 'gnd', direction: null,
+    type: PinType.GROUND
+  }],
+  [40, {
+    name: 'gpio pcm',
+    direction: null,
     type: PinType.IO
   }]]);
 
@@ -148,26 +241,31 @@ const PinIcon = ({ onClick, type }: IconProps & { type: PinType }) => {
 
 export default function Pinout({
   sendHandler,
-  setActivePin,
   connected,
-}: { sendHandler: SendHandler, setActivePin: (id: number) => void, connected: boolean }) {
-  const [pins, setPins] = useState<(GPIOPin & { sendValue?: number })[]>(Array.from(gpio.values()));
-  const topPins = pins.filter((pin, id) => id % 2 === 0);
-  const bottomPins = pins.filter((pin, id) => id % 2 === 1);
+  setError,
+}: { sendHandler: SendHandler, connected: boolean, setError: React.Dispatch<React.SetStateAction<Record<string, unknown>>> }) {
+  const [pins, setPins] = useState<(ExtendedPinState)[]>(Array.from(gpio.values()));
+
+  const data = useContext(GPIOContext);
 
   const handleSetPinValue = useMemo(() => {
-    return ({ id, sendValue }: { id: number, sendValue: number }) => {
+    return ({ id, value }: { id: number, value: 1 | 0 }) => {
       const pin = gpio.get(id);
       if (!pin || pin.type !== 'io') {
         return;
       }
-      gpio.set(id, { ...pin, sendValue });
+
+      // update the react state
+      gpio.set(id, { ...pin, value });
       setPins(Array.from(gpio.values()));
+
+      // send commmand to write the pin value
+      sendHandler({ id, value, action: 'write' });
     }
   }, [sendHandler]);
 
   const handleSetDirection = useMemo(() => {
-    return ({ id, newDirection }: { id: number, newDirection: 'in' | 'out' | null }) => {
+    return ({ id, newDirection }: { id: number, newDirection: PinIOStateType | null }) => {
       const pin = gpio.get(id);
       if (!pin || pin.type !== 'io') {
         return;
@@ -179,32 +277,39 @@ export default function Pinout({
     }
   }, [sendHandler]);
 
+  useEffect(() => {
+    console.log(pins.map((v) => v.name));
+    console.log(data);
+  }, [data]);
+
   return (
-    <React.Fragment><TableContainer component={Paper}>
-      <Table size="small" aria-label="GPIO Pinout">
+    <React.Fragment><TableContainer component={Paper} sx={{ flexGrow: 1 }}>
+      <Table aria-label="GPIO Pinout">
         <TableBody>
-          {topPins
+          {pins
             .map((pin, index) => {
-              const pinId = 2 * index + 1;
-              // TODO: This splitting of the array into two is not a good idea
+              const pinId = index + 1;
               return (
                 <TableRow
-                  key={`${index}:${index + 1}`}
+                  key={pinId}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell onClick={() => setActivePin(pinId)} component="td"
-                             sx={{ backgroundColor: 'default', cursor: 'pointer' }}>
-                    <Typography fontSize={10}>{topPins[index].name}</Typography>
+                  <TableCell width={1} component="td" sx={{ backgroundColor: 'default', cursor: 'pointer' }}>
+                    <Typography fontSize={10}>{pin.name}</Typography>
                   </TableCell>
-                  <TableCell>
-                    {pin.type === 'io' && <ToggleButtonGroup
+                  <TableCell width={1}>
+                    {pin.type === 'io' &&
+                    <ToggleButtonGroup
                       size="small"
                       color="primary"
                       value={pin.direction}
                       exclusive
                       sx={{ fontSize: 6, height: '10px', lineHeight: '10px' }}
-                      onChange={(event: React.MouseEvent<HTMLElement>, newDirection: 'in' | 'out' | null) => {
-                        if (!connected) return;
+                      onChange={(event: React.MouseEvent<HTMLElement>, newDirection: PinIOStateType | null) => {
+                        if (!connected) {
+                          setError({ wsHost: true });
+                          return;
+                        }
                         handleSetDirection({
                           id: pinId,
                           newDirection,
@@ -213,81 +318,38 @@ export default function Pinout({
                     >
                       <ToggleButton sx={{ fontSize: 8 }} value="in">In</ToggleButton>
                       <ToggleButton sx={{ fontSize: 8 }} value="out">Out</ToggleButton>
-                    </ToggleButtonGroup>}
+                    </ToggleButtonGroup>
+                    }
                   </TableCell>
-                  <TableCell>
-                    <TextField value={pin.sendValue !== undefined ? String(pin.sendValue) : ''}
-                               size="small"
-                               sx={{ fontSize: 8 }}
-                               onKeyDown={(e) => {
-                                 console.log(pinId, e.key);
-                                 if (e.key === '1' || e.key === '0') {
-                                   handleSetPinValue({ id: pinId, sendValue: Number(e.key) });
-                                 }
-                               }}/>
-                    <Button disabled={!connected || topPins[index].sendValue === undefined}
-                            size="small"
-                            onClick={() => sendHandler({
-                              id: pinId,
-                              action: 'write',
-                              value: (topPins[index].sendValue as 1 | 0)
-                            })}>send</Button>
-
-                  </TableCell>
-                  <TableCell align="right"><PinIcon type={topPins[index].type}
-                                                    onClick={() => topPins[index].direction === 'out' && sendHandler({
-                                                      id: pinId,
-                                                      value: 1,
-                                                      action: 'write',
-                                                    })}/></TableCell>
-                  <TableCell align="left"><PinIcon type={bottomPins[index].type}
-                                                   onClick={() => topPins[index].direction === 'out' && sendHandler({
-                                                     id: pinId + 1,
-                                                     value: 1,
-                                                     action: 'write',
-                                                   })}/></TableCell>
-                  <TableCell>
-                    <TextField
-                      value={bottomPins[index].sendValue !== undefined ? String(bottomPins[index].sendValue) : ''}
+                  <TableCell width={1}>
+                    {pin.type === 'io' &&
+                    <ToggleButtonGroup
                       size="small"
-                      sx={{ fontSize: 8 }}
-                      onKeyDown={(e) => {
-                        console.log(pinId, e.key);
-                        if (e.key === '1' || e.key === '0') {
-                          handleSetPinValue({ id: pinId + 1, sendValue: Number(e.key) });
-                        }
-                      }}/>
-                    <Button disabled={!connected || bottomPins[index].sendValue === undefined}
-                            size="small"
-                            onClick={() => sendHandler({
-                              id: pinId + 1,
-                              action: 'write',
-                              value: (bottomPins[index].sendValue as 1 | 0)
-                            })}>send</Button>
-                  </TableCell>
-
-                  <TableCell>
-                    {bottomPins[index].type === 'io' && <ToggleButtonGroup
-                      size="small"
-                      color="primary"
-                      value={bottomPins[index].direction}
+                      color={pin.direction === 'out' ? 'primary' : 'secondary'}
+                      value={pin.value}
                       exclusive
                       sx={{ fontSize: 6, height: '10px', lineHeight: '10px' }}
-                      onChange={(event: React.MouseEvent<HTMLElement>, newDirection: 'in' | 'out' | null) => {
+                      disabled={pin.direction !== PinIOStateType.OUT}
+                      onChange={(event: React.MouseEvent<HTMLElement>, newValue: 1 | 0 | null) => {
                         if (!connected) return;
-                        handleSetDirection({
-                          id: pinId + 1,
-                          newDirection,
+
+                        const value = newValue === null ? pin.value : newValue;
+                        if (value === undefined) return;
+
+                        handleSetPinValue({
+                          id: pinId,
+                          value: value,
                         });
                       }}
                     >
-                      <ToggleButton sx={{ fontSize: 8 }} value="in">In</ToggleButton>
-                      <ToggleButton sx={{ fontSize: 8 }} value="out">Out</ToggleButton>
-                    </ToggleButtonGroup>}
+                      <ToggleButton sx={{ fontSize: 8 }} value={1}>1</ToggleButton>
+                      <ToggleButton sx={{ fontSize: 8 }} value={0}>0</ToggleButton>
+                    </ToggleButtonGroup>
+                    }
                   </TableCell>
-                  <TableCell onClick={() => connected && setActivePin(pinId + 1)} component="td"
-                             sx={{ cursor: 'pointer' }}>
-                    <Typography fontSize={10}>{bottomPins[index].name}</Typography>
+                  <TableCell width={1} align="right"><PinIcon type={pin.type}/></TableCell>
+                  <TableCell width="auto">
+                    <Chart data={[]}/>
                   </TableCell>
                 </TableRow>
               );

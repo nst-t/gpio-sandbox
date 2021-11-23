@@ -25,7 +25,7 @@ const onRead = (id, value) => {
 };
 
 const onWriteMessage = async (id, value) => {
-  nst.send('gpio', { id, value })
+  // nst.send('gpio', { id, value })
   console.log(`wrote pin ${id}: ${value}`);
 }
 
@@ -33,7 +33,7 @@ const setPinToOutput = async (id) => {
   const index = id - 1;
   try {
     console.log(`set pin ${id} to ${gpiop.DIR_OUT}`);
-    await gpiop.setup(id, gpiop.DIR_OUT, gpiop.EDGE_BOTH);
+    await gpiop.setup(id, gpiop.DIR_OUT);
     pins[index].direction = 'out';
   } catch (err) {
     console.log(`caught no!`, err);
@@ -46,15 +46,6 @@ const setPinToInput = async (id) => {
     console.log(`set pin ${id} to ${gpiop.DIR_IN}`);
     await gpiop.setup(id, gpiop.DIR_IN);
     pins[index].direction = 'in';
-    let value;
-    try {
-      console.log(`... pin ${id} is now input, so read value`)
-      value = await gpiop.read(index);
-    } catch (err) {
-      console.log('err setting value', err)
-    }
-    console.log(`pin ${id} value: ${value}`);
-    onRead(id, value);
   } catch (err) {
     console.warn(`caught no?`, err);
   }
@@ -93,7 +84,7 @@ nst.addListener("open", () => {
       const { action, id, direction, value } = message;
       const index = id - 1;
       const pin = pins[index];
-      console.log('[subscription:gpio]', action, id, direction, value, pin)
+      console.log('[subscription:gpio-command]', action, id, direction, value, pin)
 
       switch (action) {
         case 'set':

@@ -4,28 +4,31 @@ export enum PinIOStateType {
 }
 
 export interface PinState {
-  id: string,
-  updatedAt: Date,
-  io: PinIOStateType,
+  name: string,
+  direction?: PinIOStateType | null,
+  type: PinType
 }
 
 export interface PinData {
   id: number,
   value: number | null,
   date: Date,
-}
-
-export interface GPIOState {
-  [id: string]: PinState;
+  direction?: PinIOStateType | null,
 }
 
 export type PinTimeSeriesData = PinData[]
 
-export interface SendMessageHandlerSignature {
+export interface CommandMessage {
   action: 'read' | 'write' | 'set',
   id: number,
   value?: 1 | 0,
-  direction?: 'in' | 'out' | null,
+  direction?: PinIOStateType | null,
 }
 
-export type SendHandler = (args: SendMessageHandlerSignature) => void;
+export type SendHandler = (args: CommandMessage) => void;
+
+export enum PinType {
+  IO = 'io',
+  POWER = 'power',
+  GROUND = 'ground'
+}

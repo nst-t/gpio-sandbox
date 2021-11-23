@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -14,21 +14,22 @@ export default function PinData({ data }: { data: PinTimeSeriesData }) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell width={100}>Pin</TableCell>
+            <TableCell width={100}>Pin Id</TableCell>
             <TableCell width={100}>Time</TableCell>
-            <TableCell align="right">I/O</TableCell>
+            <TableCell align="right">Value</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(({ id, date, value }, index) => (
-            <TableRow key={index}>
-              <TableCell>{id}</TableCell>
-              <TableCell>{`${new Date(date).getHours()}:${new Date(
-                date
-              ).getMinutes()}`}</TableCell>
-              <TableCell>{value}</TableCell>
-            </TableRow>
-          ))}
+          {data.map(({ id, date, value }, index) => {
+            console.log('PinData', { id, date, value });
+            return (
+              <TableRow key={index}>
+                <TableCell>{id}</TableCell>
+                <TableCell>{date}</TableCell>
+                <TableCell align="right">{value ? '1' : '0'}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </React.Fragment>
