@@ -1,17 +1,13 @@
-import * as React from "react";
+import React, { useMemo } from 'react';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
-import { PinState, PinTimeSeriesData } from "../types";
+import { PinTimeSeriesData } from '../types';
 
-// function preventDefault(event: React.MouseEvent) {
-//   event.preventDefault();
-// }
-
-export default function Orders({ data }: { data: PinTimeSeriesData }) {
+export default function PinData({ data }: { data: PinTimeSeriesData }) {
   return (
     <React.Fragment>
       <Title>GPIO Pin Data</Title>
@@ -24,8 +20,9 @@ export default function Orders({ data }: { data: PinTimeSeriesData }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(({ id, date, value }) => (
-            <TableRow key={id}>
+          {data.map(({ id, date, value }, index) => (
+            <TableRow key={index}>
+              <TableCell>{id}</TableCell>
               <TableCell>{`${new Date(date).getHours()}:${new Date(
                 date
               ).getMinutes()}`}</TableCell>

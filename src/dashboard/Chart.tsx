@@ -1,5 +1,5 @@
-import * as React from "react";
-import { useTheme } from "@mui/material/styles";
+import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
 import {
   LineChart,
   Line,
@@ -7,26 +7,29 @@ import {
   YAxis,
   Label,
   ResponsiveContainer,
-} from "recharts";
-import Title from "./Title";
-import { PinTimeSeriesData } from "../types";
+} from 'recharts';
+import Title from './Title';
+import { PinTimeSeriesData } from '../types';
 
 export default function Chart({ data }: { data: PinTimeSeriesData }) {
   const theme = useTheme();
 
-  const displayFormattedData = data.map((data) => {
-    return {
-      ...data,
-      time: `${new Date(data.date).getHours()}:${new Date(
-        data.date
-      ).getMinutes()}`,
-    };
-  });
+  let displayFormattedData: PinTimeSeriesData = [];
 
-  console.log(data);
+  if (data) {
+    displayFormattedData = data.map((data) => {
+      return {
+        ...data,
+        time: `${new Date(data.date).getHours()}:${new Date(
+          data.date
+        ).getMinutes()}`,
+      };
+    })
+  }
+
   return (
     <React.Fragment>
-      <Title>Data {data[0] && data[0].id}</Title>
+      <Title>Pin Data</Title>
       <ResponsiveContainer>
         <LineChart
           data={displayFormattedData}
@@ -45,7 +48,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
             <Label
               position="bottom"
               style={{
-                textAnchor: "middle",
+                textAnchor: 'middle',
                 fill: theme.palette.text.primary,
                 ...theme.typography.body1,
               }}
@@ -61,7 +64,7 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
               angle={270}
               position="left"
               style={{
-                textAnchor: "middle",
+                textAnchor: 'middle',
                 fill: theme.palette.text.primary,
                 ...theme.typography.body1,
               }}
@@ -71,12 +74,12 @@ export default function Chart({ data }: { data: PinTimeSeriesData }) {
           </YAxis>
           <Line
             isAnimationActive={false}
-            type="stepAfter"
+            type="stepBefore"
             dataKey="value"
             stroke={theme.palette.primary.main}
             dot={false}
             connectNulls={false}
-            strokeLinejoin={"miter"}
+            strokeLinejoin={'miter'}
           />
         </LineChart>
       </ResponsiveContainer>
