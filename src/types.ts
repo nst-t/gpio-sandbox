@@ -21,9 +21,6 @@ export interface GPIOState {
 
 export type PinTimeSeriesData = PinData[]
 
-export type GPIOTimeSeriesData = PinTimeSeriesData[];
-
-
 export interface SendMessageHandlerSignature {
   action: 'read' | 'write' | 'set',
   id: number,

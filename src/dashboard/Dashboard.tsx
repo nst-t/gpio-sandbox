@@ -12,7 +12,6 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
-import Button from '@mui/material/Button';
 import { TextField } from '@mui/material';
 import { CastConnectedRounded } from '@mui/icons-material';
 import { MainListItems } from './listItems';
@@ -151,19 +150,19 @@ export default function Dashboard({
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={6} lg={12}>
-                <Paper sx={{ padding: 2 }}>
-                  <TextField disabled={!connected} variant="standard"
-                             label={`Pin ${activePin}`}
-                             onChange={(e) => {
-                               console.log(`set send value to ${e.target.value ? 1 : 0}`)
-                               setSendValue(e.target.value ? 1 : 0)
-                             }}
-                  />
-                  <Button disabled={!connected} onClick={() => {
-                    sendHandler({ action: 'write', id: activePin, value: sendValue });
-                  }}
-                          variant="outlined" type="submit" aria-label="send to pin">Send</Button>
-                </Paper>
+                {/*<Paper sx={{ padding: 2 }}>*/}
+                {/*  <TextField disabled={!connected} variant="standard"*/}
+                {/*             label={`Pin ${activePin}`}*/}
+                {/*             onChange={(e) => {*/}
+                {/*               console.log(`set send value to ${e.target.value ? 1 : 0}`)*/}
+                {/*               setSendValue(e.target.value ? 1 : 0)*/}
+                {/*             }}*/}
+                {/*  />*/}
+                {/*  <Button disabled={!connected} onClick={() => {*/}
+                {/*    sendHandler({ action: 'write', id: activePin, value: sendValue });*/}
+                {/*  }}*/}
+                {/*          variant="outlined" type="submit" aria-label="send to pin">Send</Button>*/}
+                {/*</Paper>*/}
               </Grid>
               <Grid item xs={6} lg={12}>
                 <Paper sx={{ padding: 2 }}>
@@ -171,23 +170,20 @@ export default function Dashboard({
                              label="websocket host"
                              onChange={(e) => setUpdatedWsUrl(e.target.value)}
                              onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}
+                             onKeyDown={(e) => {
+                               if (e.key.toLowerCase() === 'enter') setWsUrl(updatedWsUrl);
+                             }}
                              fullWidth
                   />
                 </Paper>
               </Grid>
               {/* Pinout */}
-              {openViews.pins && (<Grid item xs={12} md={4} lg={3} sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-around',
-                width: '120px',
-              }}>
+              {openViews.pins && (<Grid item xs={12} md={5}>
                 <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 480,
                     width: 1,
                   }}
                 >
@@ -200,7 +196,7 @@ export default function Dashboard({
               </Grid>)}
 
               {/* Chart */}
-              <Grid item xs={12} md={openViews.pins ? 8 : 12} lg={openViews.pins ? 9 : 12}>
+              <Grid item xs={12} md={openViews.pins ? 7 : 12}>
                 <Paper
                   sx={{
                     p: 2,
@@ -209,13 +205,13 @@ export default function Dashboard({
                     height: 480,
                   }}
                 >
-                  <Chart data={activePin ? data[activePin] : []}/>
+                  <Chart data={data}/>
                 </Paper>
               </Grid>
               {/* Recent PinData */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <PinData data={activePin ? data[activePin] : []}/>
+                  <PinData data={data}/>
                 </Paper>
               </Grid>
             </Grid>

@@ -8,7 +8,7 @@ import {
   TableContainer,
   Typography,
   IconProps,
-  IconButton,
+  IconButton, ToggleButtonGroup, ToggleButton,
 } from '@mui/material';
 import { CircleTwoTone } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
@@ -156,14 +156,12 @@ export default function Pinout({
   const bottomPins = pins.filter((pin, id) => id % 2 === 1);
 
   const handleSetDirection = useMemo(() => {
-    return (id: number) => {
+    return ({ id, newDirection }: { id: number, newDirection: 'in' | 'out' | null }) => {
       const pin = gpio.get(id);
-      console.log('set direction pin', id, pin);
       if (!pin || pin.type !== 'io') {
         return;
       }
-      const prevDirection = pin.direction;
-      const direction = prevDirection === 'out' ? 'in' : 'out';
+      const direction = newDirection ? newDirection : pin.direction;
       gpio.set(id, { ...pin, direction });
       setPins(Array.from(gpio.values()));
       sendHandler({ action: 'set', direction, id })
@@ -186,18 +184,50 @@ export default function Pinout({
                   <TableCell onClick={() => setActivePin(pinId)} component="td"
                              sx={{ backgroundColor: 'default', cursor: 'pointer' }}>
                     <Typography fontSize={10}>{topPins[index].name}</Typography>
-                    {topPins[index].direction && <Typography fontSize={8}>{topPins[index].direction}</Typography>}
                   </TableCell>
-                  <TableCell sx={{ borderRight: 1, backgroundColor: 'background' }} align="right">
-                    {/* // TODO: put a proper toggle here for setting in/out */}
-                    <PinIcon type={topPins[index].type} onClick={() => connected && handleSetDirection(pinId)}/>
+                  <TableCell>
+                    {pin.type === 'io' && <ToggleButtonGroup
+                      size="small"
+                      color="primary"
+                      value={pin.direction}
+                      exclusive
+                      sx={{ fontSize: 6, height: '10px', lineHeight: '10px' }}
+                      onChange={(event: React.MouseEvent<HTMLElement>, newDirection: 'in' | 'out' | null) => {
+                        if (!connected) return;
+                        handleSetDirection({
+                          id: pinId,
+                          newDirection,
+                        });
+                      }}
+                    >
+                      <ToggleButton sx={{ fontSize: 8 }} value="in">In</ToggleButton>
+                      <ToggleButton sx={{ fontSize: 8 }} value="out">Out</ToggleButton>
+                    </ToggleButtonGroup>}
                   </TableCell>
-                  <TableCell align="left"><PinIcon type={bottomPins[index].type}
-                                                   onClick={() => handleSetDirection(pinId + 1)}/></TableCell>
+                  <TableCell align="right"><PinIcon  type={topPins[index].type}/></TableCell>
+                  <TableCell align="left"><PinIcon type={bottomPins[index].type}/></TableCell>
+                  <TableCell>
+                    {bottomPins[index].type === 'io' && <ToggleButtonGroup
+                      size="small"
+                      color="primary"
+                      value={bottomPins[index].direction}
+                      exclusive
+                      sx={{ fontSize: 6, height: '10px', lineHeight: '10px' }}
+                      onChange={(event: React.MouseEvent<HTMLElement>, newDirection: 'in' | 'out' | null) => {
+                        if (!connected) return;
+                        handleSetDirection({
+                          id: pinId + 1,
+                          newDirection,
+                        });
+                      }}
+                    >
+                      <ToggleButton sx={{ fontSize: 8 }} value="in">In</ToggleButton>
+                      <ToggleButton sx={{ fontSize: 8 }} value="out">Out</ToggleButton>
+                    </ToggleButtonGroup>}
+                  </TableCell>
                   <TableCell onClick={() => connected && setActivePin(pinId + 1)} component="td"
                              sx={{ cursor: 'pointer' }}>
                     <Typography fontSize={10}>{bottomPins[index].name}</Typography>
-                    {bottomPins[index].direction && <Typography fontSize={8}>{bottomPins[index].direction}</Typography>}
                   </TableCell>
                 </TableRow>
               );

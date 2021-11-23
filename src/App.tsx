@@ -5,9 +5,9 @@ import Box from '@mui/material/Box';
 import { NstrumentaClient } from 'nstrumenta';
 import {
   PinIOStateType,
-  GPIOTimeSeriesData,
   GPIOState,
   PinData,
+  PinTimeSeriesData,
   SendMessageHandlerSignature,
   SendHandler,
 } from './types';
@@ -16,30 +16,12 @@ import { createContext, useEffect, useState } from 'react';
 const CHANNEL = 'gpio';
 const COMMAND_CHANNEL = 'gpio-command'
 
-const initialGPIOState: GPIOState = {};
-for (let i = 1; i <= 40; i += 1) {
-  initialGPIOState[i.toString()] = {
-    id: i.toString(),
-    updatedAt: new Date(),
-    io: PinIOStateType.IN,
-  };
-}
+const initialTimeSeriesData: PinTimeSeriesData = [];
 
-const initialTimeSeriesData: GPIOTimeSeriesData = [];
-for (let i = 1; i <= 40; i += 1) {
-  initialTimeSeriesData[i] = [
-    {
-      id: i,
-      date: new Date(Date.now() + 30 * 60 * 1000),
-      value: null,
-    },
-  ];
-}
-
-export const GPIOContext = createContext<GPIOTimeSeriesData>([]);
+export const GPIOContext = createContext<PinTimeSeriesData>([]);
 
 export default function App() {
-  const [data, setData] = useState<GPIOTimeSeriesData>(initialTimeSeriesData);
+  const [data, setData] = useState<PinTimeSeriesData>(initialTimeSeriesData);
   const [wsUrl, setWsUrl] = useState(`ws://${window.location.hostname}:8088`);
   const [connected, setConnected] = useState(false);
   const [sendHandler, setSendHandler] = useState<SendHandler>(() => () => (_: SendMessageHandlerSignature) => null);
@@ -77,20 +59,7 @@ export default function App() {
         console.log('sendHandler should be set, now subscribe to channel');
         nst.subscribe(CHANNEL, (pinData: PinData) => {
           console.log(`received message`, pinData);
-          setData((prevData) => {
-            // Data is an array of arrays. To avoid unexpected state issues in React,
-            // we want to treat arrays as immutable, and clone them to set new state.
-            // First, the top level array is mapped to a new array
-            const newData = prevData.map((singlePinSeries, index) => {
-              // And each pin's individual timeseries array is cloned
-              if (index === pinData.id) {
-                // In the case of the particular pin receiving an update, we concatenate onto the clone
-                return [...singlePinSeries, pinData];
-              }
-              return [...singlePinSeries];
-            });
-            return newData;
-          });
+          setData((prevData) => prevData.concat(pinData));
         });
       });
 
