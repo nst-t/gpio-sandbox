@@ -21,7 +21,6 @@ export default function PinData({ data }: { data: PinTimeSeriesData }) {
         </TableHead>
         <TableBody>
           {data.map(({ id, date, value }, index) => {
-            console.log('PinData', { id, date, value });
             return (
               <TableRow key={index}>
                 <TableCell>{id}</TableCell>

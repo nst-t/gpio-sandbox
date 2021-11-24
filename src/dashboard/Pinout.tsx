@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { CircleTwoTone } from '@mui/icons-material';
 import { PinIOStateType, PinState, PinTimeSeriesData, PinType, SendHandler } from '../types';
-import Chart from './Chart';
+import Chart, { ChartMeta } from './Chart';
 import { GPIOContext } from '../App';
 
 
@@ -245,6 +245,7 @@ export default function Pinout({
   setError,
 }: { sendHandler: SendHandler, connected: boolean, setError: React.Dispatch<React.SetStateAction<Record<string, unknown>>> }) {
   const [pins, setPins] = useState(gpio);
+  const [chartMeta, setChartMeta] = useState<ChartMeta>({ minTime: 0, maxTime: 0, dataPoints: 0 });
 
   const data = useContext(GPIOContext);
 
@@ -263,7 +264,6 @@ export default function Pinout({
       sendHandler({ id, value, action: 'write' });
     }
   }, [sendHandler]);
-
   const handleSetDirection = useMemo(() => {
     return ({ id, newDirection }: { id: number, newDirection: PinIOStateType | null }) => {
       const pin = gpio.get(id);
@@ -278,11 +278,16 @@ export default function Pinout({
   }, [sendHandler]);
 
   useEffect(() => {
-    console.log(pins);
-    console.log(data);
+    let dataPoints = 0;
     for (const [id, pin] of Array.from(pins.entries())) {
       pin.data = data.filter(({ id: dataId }) => id === dataId);
+      if (pin.data.length > dataPoints) {
+        dataPoints = pin.data.length;
+      }
     }
+    const minTime = data.length > 0 ? data[0].date : 0;
+    const maxTime = data.length > 0 ? data[data.length - 1].date : 0;
+    setChartMeta({ dataPoints, minTime, maxTime });
   }, [data]);
 
   return (
@@ -351,7 +356,9 @@ export default function Pinout({
                   </TableCell>
                   <TableCell width={1} align="right"><PinIcon type={pin.type}/></TableCell>
                   <TableCell width="auto">
-                    <Chart data={pin.data || []}/>
+                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '80px' }}>
+                      <Chart meta={chartMeta} data={pin.data || []}/>
+                    </Paper>
                   </TableCell>
                 </TableRow>
               );

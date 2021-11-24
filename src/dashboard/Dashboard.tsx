@@ -19,6 +19,7 @@ import PinData from './PinData';
 import Pinout from './Pinout';
 import { GPIOContext } from '../App';
 import { SendHandler } from '../types';
+import Chart from './Chart';
 
 
 function Copyright(props: any) {
@@ -192,6 +193,7 @@ export default function Dashboard({
                   <PinData data={data}/>
                 </Paper>
               </Grid>
+
             </Grid>
             <Copyright sx={{ pt: 4 }}/>
           </Container>

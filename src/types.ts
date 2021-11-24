@@ -12,7 +12,7 @@ export interface PinState {
 export interface PinData {
   id: number,
   value: number | null,
-  date: Date,
+  date: number,
   direction?: PinIOStateType | null,
 }
 
