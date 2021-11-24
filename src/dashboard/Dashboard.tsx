@@ -12,14 +12,14 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
-import { TextField } from '@mui/material';
+import { Switch, TextField } from '@mui/material';
 import { CastConnectedRounded } from '@mui/icons-material';
 import { MainListItems } from './listItems';
-import Chart from './Chart';
 import PinData from './PinData';
 import Pinout from './Pinout';
 import { GPIOContext } from '../App';
 import { SendHandler } from '../types';
+import Chart from './Chart';
 
 
 function Copyright(props: any) {
@@ -61,12 +61,18 @@ const Drawer = styled(MuiDrawer, {})(
   }),
 );
 
-const mdTheme = createTheme();
-// const darkTheme = createTheme({
-//   palette: {
-//     mode: 'dark',
-//   }
-// })
+const theme = {
+  dark: createTheme({
+    palette: {
+      mode: 'dark',
+    }
+  }),
+  light: createTheme({
+    palette: {
+      mode: 'light',
+    }
+  })
+}
 
 // const time = new Date(2021, 11, 20, 8, 0, 0);
 
@@ -83,12 +89,14 @@ export default function Dashboard({
 }: { sendHandler: SendHandler, wsUrl: string, setWsUrl: (url: string) => void, connected: boolean }) {
   const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
-  const [activePin, setActivePin] = useState<number>(1);
-  const [sendValue, setSendValue] = useState<1 | 0>(0);
+  const [themePreference, setThemePreference] = useState<'light' | 'dark'>('light');
+  const [error, setError] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
-    console.log({ sendHandler });
-  }, [sendHandler])
+    if (error.wsHost === undefined) return;
+
+    setError({ ...error, wsHost: !connected })
+  }, [connected, error.wsHost]);
 
   const data = useContext(GPIOContext);
 
@@ -98,10 +106,9 @@ export default function Dashboard({
   };
 
   // TODO: sendHandler is being passed through multiple levels of components; use context and hook
-  console.log('[Dashboard:render], sendHandler:', sendHandler);
 
   return (
-    <ThemeProvider theme={mdTheme}>
+    <ThemeProvider theme={theme[themePreference]}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline/>
         <AppBar position="absolute">
@@ -116,6 +123,8 @@ export default function Dashboard({
             >
               Raspberry PI GPIO
             </Typography>
+            <Typography>Theme</Typography><Switch value={themePreference}
+                                                  onChange={() => setThemePreference((prev) => prev === 'light' ? 'dark' : 'light')}/>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent">
@@ -137,83 +146,54 @@ export default function Dashboard({
         <Box
           component="main"
           sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
           }}
         >
           <Toolbar/>
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={6} lg={12}>
-                {/*<Paper sx={{ padding: 2 }}>*/}
-                {/*  <TextField disabled={!connected} variant="standard"*/}
-                {/*             label={`Pin ${activePin}`}*/}
-                {/*             onChange={(e) => {*/}
-                {/*               console.log(`set send value to ${e.target.value ? 1 : 0}`)*/}
-                {/*               setSendValue(e.target.value ? 1 : 0)*/}
-                {/*             }}*/}
-                {/*  />*/}
-                {/*  <Button disabled={!connected} onClick={() => {*/}
-                {/*    sendHandler({ action: 'write', id: activePin, value: sendValue });*/}
-                {/*  }}*/}
-                {/*          variant="outlined" type="submit" aria-label="send to pin">Send</Button>*/}
-                {/*</Paper>*/}
-              </Grid>
-              <Grid item xs={6} lg={12}>
+              <Grid item xs={6}>
                 <Paper sx={{ padding: 2 }}>
-                  <TextField variant="standard"
-                             label="websocket host"
-                             onChange={(e) => setUpdatedWsUrl(e.target.value)}
-                             onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}
-                             onKeyDown={(e) => {
-                               if (e.key.toLowerCase() === 'enter') setWsUrl(updatedWsUrl);
-                             }}
-                             fullWidth
+                  <TextField
+                    variant="standard"
+                    label="websocket host"
+                    onChange={(e) => setUpdatedWsUrl(e.target.value)}
+                    onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}
+                    onKeyDown={(e) => {
+                      if (e.key.toLowerCase() === 'enter') setWsUrl(updatedWsUrl);
+                    }}
+                    error={Boolean(error.wsHost)}
+                    fullWidth
                   />
                 </Paper>
               </Grid>
               {/* Pinout */}
-              {openViews.pins && (<Grid item xs={12} md={6}>
+              {openViews.pins && (<Grid item xs={12} height="60vh" sx={{ padding: 2, overflow: 'auto' }}>
                 <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    width: 1,
+                    width: '100%',
+                    height: '100%',
                   }}
                 >
                   <Pinout
                     connected={connected}
                     sendHandler={sendHandler}
-                    setActivePin={(id: number) => setActivePin(id)}
+                    setError={setError}
                   />
                 </Paper>
               </Grid>)}
-
-              {/* Chart */}
-              <Grid item xs={12} md={openViews.pins ? 6 : 12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 480,
-                  }}
-                >
-                  <Chart data={data}/>
-                </Paper>
-              </Grid>
               {/* Recent PinData */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                   <PinData data={data}/>
                 </Paper>
               </Grid>
+
             </Grid>
             <Copyright sx={{ pt: 4 }}/>
           </Container>

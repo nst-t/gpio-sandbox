@@ -4,11 +4,9 @@ import Dashboard from './dashboard/Dashboard';
 import Box from '@mui/material/Box';
 import { NstrumentaClient } from 'nstrumenta';
 import {
-  PinIOStateType,
-  GPIOState,
   PinData,
   PinTimeSeriesData,
-  SendMessageHandlerSignature,
+  CommandMessage,
   SendHandler,
 } from './types';
 import { createContext, useEffect, useState } from 'react';
@@ -24,11 +22,10 @@ export default function App() {
   const [data, setData] = useState<PinTimeSeriesData>(initialTimeSeriesData);
   const [wsUrl, setWsUrl] = useState(`ws://${window.location.hostname}:8088`);
   const [connected, setConnected] = useState(false);
-  const [sendHandler, setSendHandler] = useState<SendHandler>(() => () => (_: SendMessageHandlerSignature) => null);
+  const [sendHandler, setSendHandler] = useState<SendHandler>(() => () => (_: CommandMessage) => null);
 
   // Set up nstrumenta listeners
   useEffect(() => {
-    console.log(`wsUrl updated to ${wsUrl}`);
     try {
       const nst = new NstrumentaClient({
         apiKey: 'file?',
@@ -40,8 +37,7 @@ export default function App() {
         console.log('a connection is made!');
         setConnected(true);
         // Now that the connection is open, we can enable sending a message on user input
-        // console.log('handler should be', handler, 'but set to 2 instead');
-        setSendHandler(() => (message: SendMessageHandlerSignature) => {
+        setSendHandler(() => (message: CommandMessage) => {
             console.log('send message', message);
             if (!message) {
               console.log('nothing to send');
@@ -56,7 +52,6 @@ export default function App() {
           }
         );
 
-        console.log('sendHandler should be set, now subscribe to channel');
         nst.subscribe(CHANNEL, (pinData: PinData) => {
           console.log(`received message`, pinData);
           setData((prevData) => prevData.concat(pinData));
