@@ -31,14 +31,14 @@ const pins = [
   { name: 'gnd', type: 'ground' },
   { name: 'gpio 6', type: 'io', value: null },
   { name: 'gpio 12', type: 'io', value: null },
-  // { name: 'gpio 13', type: 'io' },
-  // { name: 'gnd', type: 'ground' },
-  // { name: 'gpio 19', type: 'io' },
-  // { name: 'gpio 16', type: 'io' },
-  // { name: 'gpio 26', type: 'io' },
-  // { name: 'gpio 20', type: 'io' },
-  // { name: 'gnd', type: 'ground' },
-  // { name: 'gpio 21', type: 'io' },
+  { name: 'gpio 13', type: 'io' },
+  { name: 'gnd', type: 'ground' },
+  { name: 'gpio 19', type: 'io' },
+  { name: 'gpio 16', type: 'io' },
+  { name: 'gpio 26', type: 'io' },
+  { name: 'gpio 20', type: 'io' },
+  { name: 'gnd', type: 'ground' },
+  { name: 'gpio 21', type: 'io' },
 ]
 
 module.exports = pins;
