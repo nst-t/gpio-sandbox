@@ -1,6 +1,5 @@
 # Nstrumenta Sandbox Example
 
-
 This repo contains two pieces:
 
 * web based [sandbox](#sandbox) demo app
