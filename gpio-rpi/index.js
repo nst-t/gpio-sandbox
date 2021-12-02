@@ -1,5 +1,5 @@
-const { NstrumentaClient } = require("nstrumenta");
-const ws = require("ws");
+const { NstrumentaClient } = require('nstrumenta');
+const ws = require('ws');
 
 const gpiop = require('rpi-gpio').promise;
 
@@ -8,9 +8,9 @@ const pins = require('./pinMap');
 const timeout = 1000; // retry connection
 
 const context = {
-  apiKey: "",
-  wsUrl: "ws://localhost:8088",
-  projectId: "",
+  apiKey: '',
+  wsUrl: 'ws://localhost:8088',
+  projectId: '',
 };
 
 const nst = new NstrumentaClient(context);
@@ -18,16 +18,18 @@ const nst = new NstrumentaClient(context);
 const onRead = (id, value) => {
   try {
     console.log(`apparently we've read pin ${id} > ${value}, now show off in the gpio channel`);
-    nst.send('gpio', { action: 'read', date: Date.now(), id: id, value });
+    nst.send('gpio', {
+      action: 'read', date: Date.now(), id, value,
+    });
   } catch (err) {
-    console.log('error sending to gpio')
+    console.log('error sending to gpio');
   }
 };
 
 const onWriteMessage = async (id, value) => {
   // nst.send('gpio', { id, value })
   console.log(`wrote pin ${id}: ${value}`);
-}
+};
 
 const setPinToOutput = async (id) => {
   const index = id - 1;
@@ -36,9 +38,9 @@ const setPinToOutput = async (id) => {
     await gpiop.setup(id, gpiop.DIR_OUT);
     pins[index].direction = 'out';
   } catch (err) {
-    console.log(`caught no!`, err);
+    console.log('caught no!', err);
   }
-}
+};
 
 const setPinToInput = async (id) => {
   const index = id - 1;
@@ -47,17 +49,16 @@ const setPinToInput = async (id) => {
     await gpiop.setup(id, gpiop.DIR_IN);
     pins[index].direction = 'in';
   } catch (err) {
-    console.warn(`caught no?`, err);
+    console.warn('caught no?', err);
   }
-}
+};
 
-
-nst.addListener("open", () => {
-  process.on('SIGINT', _ => {
-    console.log(`saw sigint`);
+nst.addListener('open', () => {
+  process.on('SIGINT', (_) => {
+    console.log('saw sigint');
     gpiop.destroy();
     process.exit();
-  })
+  });
 
   gpiop.on('change', (pin, value) => {
     console.log(`>> detected change on pin ${pin}: ${value}`);
@@ -65,14 +66,14 @@ nst.addListener("open", () => {
   });
 
   // This is just for testing onRead, as if we read from the gpio
-  nst.subscribe("gpio-rpi", async (message) => {
+  nst.subscribe('gpio-rpi', async (message) => {
     console.log(message);
 
     switch (message) {
-      case "1":
+      case '1':
         onRead(3, 1);
         break;
-      case "0":
+      case '0':
         onRead(3, 0);
         break;
     }
@@ -81,10 +82,12 @@ nst.addListener("open", () => {
   nst.subscribe('gpio-command', async (message) => {
     console.log('received command', message);
     try {
-      const { action, id, direction, value } = message;
+      const {
+        action, id, direction, value,
+      } = message;
       const index = id - 1;
       const pin = pins[index];
-      console.log('[subscription:gpio-command]', action, id, direction, value, pin)
+      console.log('[subscription:gpio-command]', action, id, direction, value, pin);
 
       switch (action) {
         case 'set':
@@ -109,7 +112,7 @@ nst.addListener("open", () => {
       console.warn('problem with message', e);
       throw e;
     }
-  })
+  });
 });
 
 start().then((result) => {
@@ -128,4 +131,3 @@ async function start() {
 
   return success;
 }
-

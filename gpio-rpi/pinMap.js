@@ -39,6 +39,6 @@ const pins = [
   { name: 'gpio 20', type: 'io' },
   { name: 'gnd', type: 'ground' },
   { name: 'gpio 21', type: 'io' },
-]
+];
 
 module.exports = pins;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -14,26 +14,23 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import { Switch, TextField } from '@mui/material';
 import { CastConnectedRounded } from '@mui/icons-material';
-import { MainListItems } from './listItems';
-import PinData from './PinData';
-import Pinout from './Pinout';
+import { MainListItems } from './ListItems';
+import { PinData } from './PinData';
+import { Pinout } from './Pinout';
 import { GPIOContext } from '../App';
-import { SendHandler } from '../types';
-import Chart from './Chart';
+import { OpenViews, SendHandler } from '../types';
 
-
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://nstrumenta.com/">
-        nstrumenta
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const Copyright = (props: any) => (
+  <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    {'Copyright © '}
+    <Link color="inherit" href="https://nstrumenta.com/">
+      nstrumenta
+    </Link>
+    {' '}
+    {new Date().getFullYear()}
+    .
+  </Typography>
+);
 
 const drawerWidth: number = 72;
 
@@ -65,28 +62,30 @@ const theme = {
   dark: createTheme({
     palette: {
       mode: 'dark',
-    }
+    },
   }),
   light: createTheme({
     palette: {
       mode: 'light',
-    }
-  })
-}
+    },
+  }),
+};
 
 // const time = new Date(2021, 11, 20, 8, 0, 0);
 
-export interface OpenViews {
-  pins: boolean,
-  data: boolean,
+export interface DashboardProps {
+  sendHandler: SendHandler,
+  wsUrl: string,
+  setWsUrl: (url: string) => void,
+  connected: boolean,
 }
 
-export default function Dashboard({
+export const Dashboard = ({
   wsUrl,
   setWsUrl,
   connected,
   sendHandler,
-}: { sendHandler: SendHandler, wsUrl: string, setWsUrl: (url: string) => void, connected: boolean }) {
+}: DashboardProps) => {
   const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
   const [themePreference, setThemePreference] = useState<'light' | 'dark'>('light');
@@ -95,14 +94,13 @@ export default function Dashboard({
   useEffect(() => {
     if (error.wsHost === undefined) return;
 
-    setError({ ...error, wsHost: !connected })
+    setError({ ...error, wsHost: !connected });
   }, [connected, error.wsHost]);
 
   const data = useContext(GPIOContext);
 
   const updateViews = (name: string, state: boolean) => {
-    console.log('updateViews', name, state)
-    setOpenViews({ ...openViews, [name]: state })
+    setOpenViews({ ...openViews, [name]: state });
   };
 
   // TODO: sendHandler is being passed through multiple levels of components; use context and hook
@@ -110,7 +108,7 @@ export default function Dashboard({
   return (
     <ThemeProvider theme={theme[themePreference]}>
       <Box sx={{ display: 'flex' }}>
-        <CssBaseline/>
+        <CssBaseline />
         <AppBar position="absolute">
 
           <Toolbar>
@@ -123,8 +121,11 @@ export default function Dashboard({
             >
               Raspberry PI GPIO
             </Typography>
-            <Typography>Theme</Typography><Switch value={themePreference}
-                                                  onChange={() => setThemePreference((prev) => prev === 'light' ? 'dark' : 'light')}/>
+            <Typography>Theme</Typography>
+            <Switch
+              value={themePreference}
+              onChange={() => setThemePreference((prev) => (prev === 'light' ? 'dark' : 'light'))}
+            />
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent">
@@ -136,11 +137,11 @@ export default function Dashboard({
               px: [1],
             }}
           >
-            <CastConnectedRounded color={connected ? 'secondary' : 'disabled'} sx={{ backgroundColor: 'action' }}/>
+            <CastConnectedRounded color={connected ? 'secondary' : 'disabled'} sx={{ backgroundColor: 'action' }} />
           </Toolbar>
 
-          <Divider/>
-          <List><MainListItems updateViews={updateViews} openViews={openViews}/></List>
+          <Divider />
+          <List><MainListItems updateViews={updateViews} openViews={openViews} /></List>
         </Drawer>
 
         <Box
@@ -151,7 +152,7 @@ export default function Dashboard({
             overflow: 'auto',
           }}
         >
-          <Toolbar/>
+          <Toolbar />
           <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={6}>
@@ -160,7 +161,8 @@ export default function Dashboard({
                     variant="standard"
                     label="websocket host"
                     onChange={(e) => setUpdatedWsUrl(e.target.value)}
-                    onBlur={() => setWsUrl(updatedWsUrl)} value={updatedWsUrl}
+                    onBlur={() => setWsUrl(updatedWsUrl)}
+                    value={updatedWsUrl}
                     onKeyDown={(e) => {
                       if (e.key.toLowerCase() === 'enter') setWsUrl(updatedWsUrl);
                     }}
@@ -170,35 +172,37 @@ export default function Dashboard({
                 </Paper>
               </Grid>
               {/* Pinout */}
-              {openViews.pins && (<Grid item xs={12} height="60vh" sx={{ padding: 2, overflow: 'auto' }}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    height: '100%',
-                  }}
-                >
-                  <Pinout
-                    connected={connected}
-                    sendHandler={sendHandler}
-                    setError={setError}
-                  />
-                </Paper>
-              </Grid>)}
+              {openViews.pins && (
+                <Grid item xs={12} height="60vh" sx={{ padding: 2, overflow: 'auto' }}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  >
+                    <Pinout
+                      connected={connected}
+                      sendHandler={sendHandler}
+                      setError={setError}
+                    />
+                  </Paper>
+                </Grid>
+              )}
               {/* Recent PinData */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <PinData data={data}/>
+                  <PinData data={data} />
                 </Paper>
               </Grid>
 
             </Grid>
-            <Copyright sx={{ pt: 4 }}/>
+            <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>
       </Box>
     </ThemeProvider>
   );
-}
+};

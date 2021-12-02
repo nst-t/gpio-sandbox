@@ -8,9 +8,8 @@ import {
   Label,
   ResponsiveContainer,
 } from 'recharts';
-import Title from './Title';
-import { PinTimeSeriesData } from '../types';
 import Box from '@mui/material/Box';
+import { PinTimeSeriesData } from '../types';
 
 export type ChartMeta = {
   maxTime: number;
@@ -18,13 +17,13 @@ export type ChartMeta = {
   dataPoints: number;
 };
 
-export default function Chart({
+export const Chart = ({
   data,
-  meta,
+  // meta,
 }: {
   data: PinTimeSeriesData;
-  meta: ChartMeta;
-}) {
+  // meta: ChartMeta;
+}) => {
   const theme = useTheme();
   const displayInterval = 60 * 1000;
 
@@ -32,32 +31,12 @@ export default function Chart({
 
   if (data) {
     displayFormattedData = data
-      .filter((item) => {
-        return item.date > Date.now() - displayInterval;
-      })
-      .map((data) => {
-        return {
-          ...data,
-          value: data.value === null ? null : Number(data.value),
-        };
-      });
+      .filter((item) => item.date > Date.now() - displayInterval)
+      .map((d) => ({
+        ...d,
+        value: d.value === null ? null : Number(d.value),
+      }));
   }
-
-  const TroubleshootableLine = () => {
-    console.log('render line');
-    return (
-      <Line
-        isAnimationActive={false}
-        type="stepBefore"
-        dataKey="value"
-        stroke={theme.palette.primary.main}
-        dot={false}
-        connectNulls={false}
-        strokeLinejoin={'miter'}
-      />
-    );
-  };
-
   return (
     <Box width="100%" height="100%" sx={{ backgroundColor: 'primary' }}>
       <ResponsiveContainer>
@@ -95,7 +74,7 @@ export default function Chart({
             domain={[0, 1]}
             stroke={theme.palette.text.secondary}
             style={theme.typography.body2}
-          ></YAxis>
+          />
           <Line
             isAnimationActive={false}
             type="stepBefore"
@@ -103,10 +82,10 @@ export default function Chart({
             stroke={theme.palette.primary.main}
             dot={false}
             connectNulls={false}
-            strokeLinejoin={'miter'}
+            strokeLinejoin="miter"
           />
         </LineChart>
       </ResponsiveContainer>
     </Box>
   );
-}
+};
