@@ -3,8 +3,8 @@
     {
       "type": "sandbox",
       "name": "gpio-sandbox",
-      "folder": "gpio-sandbox",
-      "entry": "dist/index.html"
-    },
+      "folder": "sandbox/build",
+      "entry": "index.html"
+    }
   ]
 }

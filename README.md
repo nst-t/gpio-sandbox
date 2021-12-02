@@ -36,10 +36,16 @@ scp -r gpio-rpi/ USER@RASPBERRYPI.LOCAL:~/gpio-rpi
 
 Once the files are on the raspberry pi, log in and run the script
 
+Installing dependencies:
 ```shell
 # raspberry pi console 2
 cd gpio-rpi
-npm i
+npm install
+```
+npm install may take a bit of time (minutes)
+
+Running the node app:
+```shell
 node index.js
 ```
 
