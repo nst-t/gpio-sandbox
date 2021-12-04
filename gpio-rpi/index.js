@@ -44,7 +44,7 @@ const setPinToInput = async (id) => {
   const index = id - 1;
   try {
     console.log(`set pin ${id} to ${gpiop.DIR_IN}`);
-    await gpiop.setup(id, gpiop.DIR_IN);
+    await gpiop.setup(id, gpiop.DIR_IN, gpiop.EDGE_BOTH);
     pins[index].direction = 'in';
   } catch (err) {
     console.warn(`caught no?`, err);
