@@ -75,6 +75,15 @@ export const App = () => {
     // return () => nst.unsubscribe(CHANNEL);
   }, [wsUrl]);
 
+  useEffect(() => {
+    const query = window.location.search;
+    const wsUrlFromQuery = (new URLSearchParams(query)).get('wsUrl');
+
+    if (wsUrlFromQuery) {
+      setWsUrl(wsUrlFromQuery);
+    }
+  }, [])
+
   return (
     <GPIOContext.Provider value={data}>
       <Box>

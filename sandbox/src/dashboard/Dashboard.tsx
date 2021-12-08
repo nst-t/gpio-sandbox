@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -86,7 +86,7 @@ export const Dashboard = ({
   connected,
   sendHandler,
 }: DashboardProps) => {
-  const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
+  const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl); // temp state of input field before, blur
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
   const [themePreference, setThemePreference] = useState<'light' | 'dark'>('light');
   const [error, setError] = useState<Record<string, unknown>>({});
@@ -97,7 +97,22 @@ export const Dashboard = ({
     setError({ ...error, wsHost: !connected });
   }, [connected, error.wsHost]);
 
+  useEffect(() => {
+    setUpdatedWsUrl(wsUrl);
+  }, [wsUrl]);
+
   const data = useContext(GPIOContext);
+
+  const handleWsUrlChange = useMemo(() => {
+    return (url: string) => {
+      setWsUrl(url);
+      const params = new URLSearchParams(window.location.search);
+      params.set('wsUrl', url);
+      const newUrl = new URL(`${window.location.origin}?${decodeURIComponent(params.toString())}`);
+      window.history.pushState('', '', newUrl);
+      console.log(`updated wsUrl to ${url}`);
+    };
+  }, [])
 
   const updateViews = (name: string, state: boolean) => {
     setOpenViews({ ...openViews, [name]: state });
@@ -161,10 +176,10 @@ export const Dashboard = ({
                     variant="standard"
                     label="websocket host"
                     onChange={(e) => setUpdatedWsUrl(e.target.value)}
-                    onBlur={() => setWsUrl(updatedWsUrl)}
+                    onBlur={() => handleWsUrlChange(updatedWsUrl)}
                     value={updatedWsUrl}
                     onKeyDown={(e) => {
-                      if (e.key.toLowerCase() === 'enter') setWsUrl(updatedWsUrl);
+                      if (e.key.toLowerCase() === 'enter') handleWsUrlChange(updatedWsUrl);
                     }}
                     error={Boolean(error.wsHost)}
                     fullWidth

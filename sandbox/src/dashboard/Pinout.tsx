@@ -304,6 +304,13 @@ export const Pinout = ({
   return (
     <TableContainer component={Paper} sx={{ flexGrow: 1 }}>
       <Table aria-label="GPIO Pinout">
+        <colgroup>
+          <col style={{width:'auto'}}/>
+          <col style={{width:'auto'}}/>
+          <col style={{width:'auto'}}/>
+          <col style={{width:'24px'}}/>
+          <col style={{width:'80%'}}/>
+        </colgroup>
         <TableBody>
           {Array.from(pins.entries())
             .map(([id, pin]) => (
@@ -311,10 +318,10 @@ export const Pinout = ({
                 key={id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell width={1} component="td" sx={{ backgroundColor: 'default', cursor: 'pointer' }}>
-                  <Typography fontSize={10}>{pin.name}</Typography>
+                <TableCell sx={{ minWidth: '100px', backgroundColor: 'default', cursor: 'pointer' }}>
+                  <Typography paragraph={false} fontSize={10}>[{id}] {pin.name}</Typography>
                 </TableCell>
-                <TableCell width={1}>
+                <TableCell align="left" >
                   {pin.type === 'io'
                   && (
                     <ToggleButtonGroup
@@ -344,7 +351,7 @@ export const Pinout = ({
                     </ToggleButtonGroup>
                   )}
                 </TableCell>
-                <TableCell width={1}>
+                <TableCell align="left" >
                   {pin.type === 'io'
                   && (
                     <ToggleButtonGroup
@@ -371,10 +378,10 @@ export const Pinout = ({
                     </ToggleButtonGroup>
                   )}
                 </TableCell>
-                <TableCell width={1} align="right"><PinIcon type={pin.type} /></TableCell>
-                <TableCell width="auto">
+                <TableCell align="left" ><PinIcon type={pin.type} /></TableCell>
+                <TableCell align="right">
                   <Paper sx={{
-                    p: 2, display: 'flex', flexDirection: 'column', height: '80px',
+                    p: 2, display: 'flex', flexDirection: 'column', height: '80px', minWidth: '240px',
                   }}
                   >
                     <Chart data={pin.data || []} />
