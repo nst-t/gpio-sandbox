@@ -301,7 +301,7 @@ export const Pinout = ({
         dataPoints = pin.data.length;
       }
     });
-  }, [data]);
+  }, [data, pins]);
 
   return (
     <TableContainer component={Paper} sx={{ flexGrow: 1 }}>

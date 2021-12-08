@@ -39,6 +39,7 @@ export const Chart = ({
   }
   return (
     <Box width="100%" height="100%" sx={{ backgroundColor: 'primary' }}>
+      <ResponsiveContainer>
         <LineChart
           data={displayFormattedData}
           margin={{
@@ -84,6 +85,7 @@ export const Chart = ({
             strokeLinejoin="miter"
           />
         </LineChart>
+      </ResponsiveContainer>
     </Box>
   );
 };

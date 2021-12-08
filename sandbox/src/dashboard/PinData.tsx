@@ -19,7 +19,7 @@ export const PinData = ({ data }: { data: PinTimeSeriesData }) => (
       </TableHead>
       <TableBody>
         {data.map(({ id, date, value }) => (
-          <TableRow key={`pin-${id}`}>
+          <TableRow key={`pin-${id}:${date}`}>
             <TableCell>{id}</TableCell>
             <TableCell>{date}</TableCell>
             <TableCell align="right">{value ? '1' : '0'}</TableCell>
