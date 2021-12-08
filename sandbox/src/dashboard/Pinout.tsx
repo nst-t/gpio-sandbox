@@ -307,11 +307,11 @@ export const Pinout = ({
     <TableContainer component={Paper} sx={{ flexGrow: 1 }}>
       <Table aria-label="GPIO Pinout">
         <colgroup>
-          <col style={{ width: 'auto' }}/>
-          <col style={{ width: 'auto' }}/>
-          <col style={{ width: 'auto' }}/>
-          <col style={{ width: '24px' }}/>
-          <col style={{ width: '80%' }}/>
+          <col style={{ width: 'auto' }} />
+          <col style={{ width: 'auto' }} />
+          <col style={{ width: 'auto' }} />
+          <col style={{ width: '24px' }} />
+          <col style={{ width: '80%' }} />
         </colgroup>
         <TableBody>
           {Array.from(pins.entries())
@@ -322,7 +322,12 @@ export const Pinout = ({
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell sx={{ minWidth: '100px', backgroundColor: 'default', cursor: 'pointer' }}>
-                  <Typography paragraph={false} fontSize={10}>[{id}] {pin.name}</Typography>
+                  <Typography paragraph={false} fontSize={10}>
+                    [
+                    {id}
+                    ]
+                    {pin.name}
+                  </Typography>
                 </TableCell>
                 <TableCell align="left">
                   {pin.type === 'io'
@@ -381,13 +386,13 @@ export const Pinout = ({
                     </ToggleButtonGroup>
                   )}
                 </TableCell>
-                <TableCell align="left"><PinIcon type={pin.type}/></TableCell>
+                <TableCell align="left"><PinIcon type={pin.type} /></TableCell>
                 <TableCell align="right">
                   <Paper sx={{
                     p: 2, display: 'flex', flexDirection: 'column', height: '80px', minWidth: '240px',
                   }}
                   >
-                    <Chart data={pin.data || []}/>
+                    <Chart data={pin.data || []} />
                   </Paper>
                 </TableCell>
               </TableRow>

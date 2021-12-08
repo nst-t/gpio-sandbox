@@ -18,13 +18,17 @@ export const PinData = ({ data }: { data: PinTimeSeriesData }) => (
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.map(({ id, date, value }) => (
-          <TableRow key={`pin-${id}:${date}`}>
-            <TableCell>{id}</TableCell>
-            <TableCell>{date}</TableCell>
-            <TableCell align="right">{value ? '1' : '0'}</TableCell>
-          </TableRow>
-        ))}
+        {data
+          .sort((a, b) => b.date - a.date)
+          .slice(0, 25)
+          .map(({ id, date, value }, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <TableRow key={`pin-${id}:${date}:${index}`}>
+              <TableCell>{id}</TableCell>
+              <TableCell>{date}</TableCell>
+              <TableCell align="right">{value ? '1' : '0'}</TableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   </>

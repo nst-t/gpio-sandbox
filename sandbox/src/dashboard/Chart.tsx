@@ -77,7 +77,7 @@ export const Chart = ({
           />
           <Line
             isAnimationActive={false}
-            type="stepBefore"
+            type="stepAfter"
             dataKey="value"
             stroke={theme.palette.primary.main}
             dot={false}

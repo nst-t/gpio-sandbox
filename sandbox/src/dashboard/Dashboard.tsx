@@ -1,4 +1,6 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import {
+  useContext, useEffect, useMemo, useState,
+} from 'react';
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -88,7 +90,7 @@ export const Dashboard = ({
 }: DashboardProps) => {
   const [activePins, setActivePins] = useState<number[]>([]);
   const [tempPinsList, setTempPinsList] = useState<string>('');
-  const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl); // temp state of input field before, blur
+  const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl);
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
   const [themePreference, setThemePreference] = useState<'light' | 'dark'>('light');
   const [error, setError] = useState<Record<string, unknown>>({});
@@ -102,7 +104,7 @@ export const Dashboard = ({
     if (error.wsHost === undefined) return;
 
     setError({ ...error, wsHost: !connected });
-  }, [connected, error.wsHost]);
+  }, [connected, error]);
 
   useEffect(() => {
     setUpdatedWsUrl(wsUrl);
@@ -110,16 +112,14 @@ export const Dashboard = ({
 
   const data = useContext(GPIOContext);
 
-  const handleWsUrlChange = useMemo(() => {
-    return (url: string) => {
-      setWsUrl(url);
-      const params = new URLSearchParams(window.location.search);
-      params.set('wsUrl', url);
-      const newUrl = new URL(`${window.location.origin}?${decodeURIComponent(params.toString())}`);
-      window.history.pushState('', '', newUrl);
-      console.log(`updated wsUrl to ${url}`);
-    };
-  }, [])
+  const handleWsUrlChange = useMemo(() => (url: string) => {
+    setWsUrl(url);
+    const params = new URLSearchParams(window.location.search);
+    params.set('wsUrl', url);
+    const newUrl = new URL(`${window.location.origin}?${decodeURIComponent(params.toString())}`);
+    window.history.pushState('', '', newUrl);
+    console.log(`updated wsUrl to ${url}`);
+  }, [setWsUrl]);
 
   const updateViews = (name: string, state: boolean) => {
     setOpenViews({ ...openViews, [name]: state });
@@ -127,13 +127,11 @@ export const Dashboard = ({
 
   // TODO: sendHandler is being passed through multiple levels of components; use context and hook
 
-  const handlePinsChange = useMemo(() => {
-    return (list: string) => {
-      const enteredPins = list.replace(/\s/g, '').split(',');
-      const pins = enteredPins.map(Number).filter(p => (p > 0 && p <= 40));
-      console.log({ pins });
-      setActivePins(pins);
-    }
+  const handlePinsChange = useMemo(() => (list: string) => {
+    const enteredPins = list.replace(/\s/g, '').split(',');
+    const pins = enteredPins.map(Number).filter((p) => (p > 0 && p <= 40));
+    console.log({ pins });
+    setActivePins(pins);
   }, []);
 
   useEffect(() => {
