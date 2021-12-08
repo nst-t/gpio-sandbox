@@ -32,3 +32,8 @@ export enum PinType {
   POWER = 'power',
   GROUND = 'ground'
 }
+
+export interface OpenViews {
+  pins: boolean,
+  data: boolean,
+}
