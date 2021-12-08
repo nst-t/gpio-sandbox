@@ -12,7 +12,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
-import { Switch, TextField } from '@mui/material';
+import { Switch, TextField, useMediaQuery } from '@mui/material';
 import { CastConnectedRounded } from '@mui/icons-material';
 import { MainListItems } from './ListItems';
 import { PinData } from './PinData';
@@ -90,6 +90,11 @@ export const Dashboard = ({
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
   const [themePreference, setThemePreference] = useState<'light' | 'dark'>('light');
   const [error, setError] = useState<Record<string, unknown>>({});
+
+  const systemPrefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  useEffect(() => {
+    setThemePreference(systemPrefersDarkMode ? 'dark' : 'light');
+  }, [systemPrefersDarkMode]);
 
   useEffect(() => {
     if (error.wsHost === undefined) return;
