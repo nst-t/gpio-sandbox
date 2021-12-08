@@ -251,10 +251,12 @@ const PinIcon = ({ onClick, type }: IconProps & { type: PinType }) => (
 );
 
 export const Pinout = ({
+  activePins,
   sendHandler,
   connected,
   setError,
 }: {
+  activePins: number[],
   sendHandler: SendHandler,
   connected: boolean,
   setError: Dispatch<SetStateAction<Record<string, unknown>>>
@@ -305,14 +307,15 @@ export const Pinout = ({
     <TableContainer component={Paper} sx={{ flexGrow: 1 }}>
       <Table aria-label="GPIO Pinout">
         <colgroup>
-          <col style={{width:'auto'}}/>
-          <col style={{width:'auto'}}/>
-          <col style={{width:'auto'}}/>
-          <col style={{width:'24px'}}/>
-          <col style={{width:'80%'}}/>
+          <col style={{ width: 'auto' }}/>
+          <col style={{ width: 'auto' }}/>
+          <col style={{ width: 'auto' }}/>
+          <col style={{ width: '24px' }}/>
+          <col style={{ width: '80%' }}/>
         </colgroup>
         <TableBody>
           {Array.from(pins.entries())
+            .filter(activePins.length > 0 ? ([id]) => (activePins.includes(id)) : (p) => p)
             .map(([id, pin]) => (
               <TableRow
                 key={id}
@@ -321,7 +324,7 @@ export const Pinout = ({
                 <TableCell sx={{ minWidth: '100px', backgroundColor: 'default', cursor: 'pointer' }}>
                   <Typography paragraph={false} fontSize={10}>[{id}] {pin.name}</Typography>
                 </TableCell>
-                <TableCell align="left" >
+                <TableCell align="left">
                   {pin.type === 'io'
                   && (
                     <ToggleButtonGroup
@@ -344,14 +347,14 @@ export const Pinout = ({
                             newDirection,
                           });
                         }
-}
+                      }
                     >
                       <ToggleButton sx={{ fontSize: 8 }} value="in">In</ToggleButton>
                       <ToggleButton sx={{ fontSize: 8 }} value="out">Out</ToggleButton>
                     </ToggleButtonGroup>
                   )}
                 </TableCell>
-                <TableCell align="left" >
+                <TableCell align="left">
                   {pin.type === 'io'
                   && (
                     <ToggleButtonGroup
@@ -378,13 +381,13 @@ export const Pinout = ({
                     </ToggleButtonGroup>
                   )}
                 </TableCell>
-                <TableCell align="left" ><PinIcon type={pin.type} /></TableCell>
+                <TableCell align="left"><PinIcon type={pin.type}/></TableCell>
                 <TableCell align="right">
                   <Paper sx={{
                     p: 2, display: 'flex', flexDirection: 'column', height: '80px', minWidth: '240px',
                   }}
                   >
-                    <Chart data={pin.data || []} />
+                    <Chart data={pin.data || []}/>
                   </Paper>
                 </TableCell>
               </TableRow>

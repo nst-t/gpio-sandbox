@@ -86,6 +86,8 @@ export const Dashboard = ({
   connected,
   sendHandler,
 }: DashboardProps) => {
+  const [activePins, setActivePins] = useState<number[]>([]);
+  const [tempPinsList, setTempPinsList] = useState<string>('');
   const [updatedWsUrl, setUpdatedWsUrl] = useState<string>(wsUrl); // temp state of input field before, blur
   const [openViews, setOpenViews] = useState<OpenViews>({ pins: true, data: true });
   const [themePreference, setThemePreference] = useState<'light' | 'dark'>('light');
@@ -124,6 +126,19 @@ export const Dashboard = ({
   };
 
   // TODO: sendHandler is being passed through multiple levels of components; use context and hook
+
+  const handlePinsChange = useMemo(() => {
+    return (list: string) => {
+      const enteredPins = list.replace(/\s/g, '').split(',');
+      const pins = enteredPins.map(Number).filter(p => (p > 0 && p <= 40));
+      console.log({ pins });
+      setActivePins(pins);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTempPinsList(activePins.join(','));
+  }, [activePins]);
 
   return (
     <ThemeProvider theme={theme[themePreference]}>
@@ -175,6 +190,7 @@ export const Dashboard = ({
           <Toolbar />
           <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
+              {/* ws url entry */}
               <Grid item xs={6}>
                 <Paper sx={{ padding: 2 }}>
                   <TextField
@@ -191,9 +207,25 @@ export const Dashboard = ({
                   />
                 </Paper>
               </Grid>
+              {/* filter pin list */}
+              <Grid item xs={6}>
+                <Paper sx={{ padding: 2 }}>
+                  <TextField
+                    variant="standard"
+                    label="pin filter (comma separated list)"
+                    onChange={(e) => setTempPinsList(e.target.value)}
+                    onBlur={() => handlePinsChange(tempPinsList)}
+                    value={tempPinsList}
+                    onKeyDown={(e) => {
+                      if (e.key.toLowerCase() === 'enter') handlePinsChange(tempPinsList);
+                    }}
+                    fullWidth
+                  />
+                </Paper>
+              </Grid>
               {/* Pinout */}
               {openViews.pins && (
-                <Grid item xs={12} height="60vh" sx={{ padding: 2, overflow: 'auto' }}>
+                <Grid item xs={12} sx={{ maxHeight: '60vh', padding: 2, overflow: 'auto' }}>
                   <Paper
                     sx={{
                       p: 2,
@@ -204,6 +236,7 @@ export const Dashboard = ({
                     }}
                   >
                     <Pinout
+                      activePins={activePins}
                       connected={connected}
                       sendHandler={sendHandler}
                       setError={setError}
